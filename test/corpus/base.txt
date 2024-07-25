@@ -1,0 +1,44 @@
+==================
+Records
+==================
+
+record Position(line: Int, col: Int, index: Int)
+
+---
+
+(source_file
+  (record_definition
+    name: (ident)
+    (record_field
+      (ident)
+      (type))
+    (record_field
+      (ident)
+      (type))
+    (record_field
+      (ident)
+      (type))))
+
+==================
+Types
+==================
+
+type List[A] {
+  Nil();
+  Cons(head: A, tail: List[A])
+}
+
+---
+
+(source_file
+  (record_definition
+    name: (ident)
+    (record_field
+      (ident)
+      (type))
+    (record_field
+      (ident)
+      (type))
+    (record_field
+      (ident)
+      (type))))
