@@ -1,26 +1,53 @@
 ==================
-Records
+Record
+==================
+record Position()
+---
+(source_file
+    (record
+       (type_identifier)))
+
+==================
+Record with Generics
 ==================
 
-record Position(line: Int, col: Int, index: Int)
+record Position [A, B](line: List[A], col: Int, index: Int)
 
 ---
 
-(source_file
-  (record_definition
-    name: (ident)
-    (record_field
-      (ident)
-      (type))
-    (record_field
-      (ident)
-      (type))
-    (record_field
-      (ident)
-      (type))))
+ (source_file
+      (record
+        (type_identifier)
+        (type_parameters
+          (generic_identifier)
+          (generic_identifier))
+        (parameters
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier)
+              (generic_identifier)))
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier)))
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier))))))
 
 ==================
-Types
+Type
+==================
+type List {}
+
+---
+(source_file
+  (type
+    (type_identifier)))
+
+==================
+Type with Generics
 ==================
 
 type List[A] {
@@ -31,14 +58,28 @@ type List[A] {
 ---
 
 (source_file
-  (record_definition
-    name: (ident)
-    (record_field
-      (ident)
-      (type))
-    (record_field
-      (ident)
-      (type))
-    (record_field
-      (ident)
-      (type))))
+  (type
+    (type_identifier)
+    (type_parameters
+        (generic_identifier))
+    (type_members
+        (type_member
+            (type_identifier))
+        (type_member
+            (type_identifier)
+            (parameters
+                (parameter
+                    (identifier)
+                    (parameter_type
+                        (type_identifier)))
+                (parameter
+                    (identifier)
+                    (parameter_type
+                        (type_identifier)
+                        (generic_identifier)
+                    )
+                )
+            )
+        )
+    )
+))
