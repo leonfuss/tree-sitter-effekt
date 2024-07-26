@@ -1,32 +1,37 @@
 [
   {
-    "type": "record_definition",
+    "type": "generic_identifier",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "parameter",
     "named": true,
     "fields": {
+      "kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "parameter_type",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "ident",
+            "type": "identifier",
             "named": true
           }
         ]
       }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "record_field",
-          "named": true
-        }
-      ]
     }
   },
   {
-    "type": "record_field",
+    "type": "parameter_type",
     "named": true,
     "fields": {},
     "children": {
@@ -34,14 +39,65 @@
       "required": true,
       "types": [
         {
-          "type": "generic_ident",
+          "type": "generic_identifier",
           "named": true
         },
         {
-          "type": "ident",
+          "type": "type_identifier",
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "parameters",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "parameter",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "record",
+    "named": true,
+    "fields": {
+      "members": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "parameters",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_parameters",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -57,11 +113,11 @@
           "named": true
         },
         {
-          "type": "record_definition",
+          "type": "record",
           "named": true
         },
         {
-          "type": "type_definition",
+          "type": "type",
           "named": true
         }
       ]
@@ -70,50 +126,72 @@
   {
     "type": "type",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "generic_ident",
-          "named": true
-        },
-        {
-          "type": "ident",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "type_definition",
-    "named": true,
     "fields": {
+      "members": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_members",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "ident",
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_parameters",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "type_identifier",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "type_member",
+    "named": true,
+    "fields": {
+      "member": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_identifier",
             "named": true
           }
         ]
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
         {
-          "type": "type_field",
+          "type": "parameters",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "type_field",
+    "type": "type_members",
     "named": true,
     "fields": {},
     "children": {
@@ -121,11 +199,22 @@
       "required": true,
       "types": [
         {
-          "type": "ident",
+          "type": "type_member",
           "named": true
-        },
+        }
+      ]
+    }
+  },
+  {
+    "type": "type_parameters",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
         {
-          "type": "type",
+          "type": "generic_identifier",
           "named": true
         }
       ]
@@ -160,11 +249,7 @@
     "named": false
   },
   {
-    "type": "generic_ident",
-    "named": true
-  },
-  {
-    "type": "ident",
+    "type": "identifier",
     "named": true
   },
   {
