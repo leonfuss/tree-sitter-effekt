@@ -83,3 +83,27 @@ type List[A] {
         )
     )
 ))
+
+==================
+Function
+==================
+
+def add(a: Int, b: Int) = {}
+
+---
+(source_file
+   (function
+       (identifier)
+       (parameters
+           (parameter
+                (identifier)
+                (parameter_type
+                    (type_identifier)))
+            (parameter
+                (identifier)
+                (parameter_type
+                    (type_identifier)))
+        )
+         (block)
+    )
+)

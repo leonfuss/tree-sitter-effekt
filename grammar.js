@@ -20,7 +20,7 @@ module.exports = grammar({
   rules: {
     source_file: ($) => repeat($._definition),
 
-    _definition: ($) => choice($.line_comment, $.record, $.type),
+    _definition: ($) => choice($.line_comment, $.record, $.type, $.function),
 
     line_comment: ($) => token(seq("//", /.*/)),
 
@@ -65,6 +65,50 @@ module.exports = grammar({
 
     type_member: ($) =>
       seq(field("member", $.type_identifier), "(", optional($.parameters), ")"),
+
+    function: ($) =>
+      seq(
+        "def",
+        field("name", $.identifier),
+        optional(field("type_parameters", $.type_parameters)),
+        "(",
+        field("parameters", $.parameters),
+        ")",
+        optional(field("block_parameters", $.block_parameters)),
+        optional(seq(":", field("return_type", $.return_type))),
+        "=",
+        field("body", $._expression),
+      ),
+
+    block_parameters: ($) => seq("{", $.parameters, "}"),
+
+    return_type: ($) =>
+      seq(
+        $.type_identifier,
+        optional(seq("[", commaSep1($.generic_identifier), "]")),
+        optional(seq("/", "{", commaSep1($.type_identifier), "}")),
+      ),
+
+    _expression: ($) => choice($.block, $.number, $.not_implemented),
+
+    not_implemented: ($) => token(seq("<", ">")),
+
+    block: ($) => seq("{", optional($._block_content), "}"),
+
+    _block_content: ($) => repeat1(choice($._expression, $.statement)),
+
+    statement: ($) => choice($.assignment),
+    assignment: ($) =>
+      seq(
+        choice("val", "var"),
+        $.identifier,
+        "=",
+        choice($.expression, $.block),
+      ),
+
+    expression: ($) => choice($.number),
+
+    number: ($) => token(/\d+/),
 
     // Defining identifiers for type names and variable names
     generic_identifier: ($) => /[A-Z][a-zA-Z0-9_]*/,
