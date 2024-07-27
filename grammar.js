@@ -127,7 +127,7 @@ module.exports = grammar({
     effect: ($) =>
       seq(
         "effect",
-        field("name", $.identifier),
+        field("name", $.type_identifier),
         optional(field("type_parameters", $.type_parameters)),
         optional(seq("(", optional(field("parameters", $.parameters)), ")")),
         optional(seq(":", field("return_type", $.return_type))),
@@ -136,7 +136,7 @@ module.exports = grammar({
     effect_alias: ($) =>
       seq(
         "effect",
-        field("name", $.identifier),
+        field("name", $.type_identifier),
         optional(field("type_parameters", $.type_parameters)),
         "=",
         "{",
