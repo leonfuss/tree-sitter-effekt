@@ -298,6 +298,37 @@
           ]
         },
         {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_simple_type"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_complex_type"
+            }
+          ]
+        }
+      ]
+    },
+    "_simple_type": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "SYMBOL",
+          "name": "parameter_type"
+        }
+      ]
+    },
+    "_complex_type": {
+      "type": "SEQ",
+      "members": [
+        {
           "type": "STRING",
           "value": "{"
         },

@@ -37,6 +37,20 @@ record Position [A, B](line: List[A], col: Int, index: Int)
               (type_identifier))))))
 
 ==================
+Simple Type
+==================
+
+type Locations = List[SomeLocation]
+
+---
+
+    (source_file
+      (type
+        (type_identifier)
+        (parameter_type
+          (type_identifier)
+          (generic_identifier))))
+==================
 Type
 ==================
 type List {}

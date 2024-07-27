@@ -57,10 +57,12 @@ module.exports = grammar({
         "type",
         field("name", $.type_identifier),
         optional(field("parameters", $.type_parameters)),
-        "{",
-        optional(field("members", $.type_members)),
-        "}",
+        choice($._simple_type, $._complex_type),
       ),
+
+    _simple_type: ($) => seq("=", $.parameter_type),
+    _complex_type: ($) =>
+      seq("{", optional(field("members", $.type_members)), "}"),
 
     type_members: ($) => semilicolonSep1($.type_member),
 
