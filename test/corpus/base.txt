@@ -209,3 +209,75 @@ interface Net {
               (effekts
                 (type_identifier)
                 (type_identifier)))))))
+
+
+==================
+Effect alias
+==================
+effect IO = { Read, Write }
+
+---
+(source_file
+      (effect_alias
+        (identifier)
+         (parameter_type
+          (type_identifier))
+        (parameter_type
+          (type_identifier))))
+
+
+==================
+Effect alias with Generics
+==================
+
+effect IO[A] = { Read, Write[A] }
+
+---
+ (source_file
+      (effect_alias
+        (identifier)
+        (type_parameters
+          (generic_identifier))
+        (parameter_type
+          (type_identifier))
+        (parameter_type
+          (type_identifier)
+          (generic_identifier))))
+
+==================
+Effect
+==================
+
+effect DefaultIndent(): Int
+
+---
+(source_file
+      (effect
+        (identifier)
+        (return_type
+          (type_identifier))))
+
+==================
+Complex Effekt
+==================
+
+effect FileNotFound[A](path: String, msg: A): Unit
+
+---
+
+ (source_file
+      (effect
+        (identifier)
+        (type_parameters
+          (generic_identifier))
+        (parameters
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier)))
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier))))
+        (return_type
+          (type_identifier))))

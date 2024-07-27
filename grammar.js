@@ -21,7 +21,15 @@ module.exports = grammar({
     source_file: ($) => repeat($._definition),
 
     _definition: ($) =>
-      choice($.line_comment, $.record, $.type, $.function, $.interface),
+      choice(
+        $.line_comment,
+        $.record,
+        $.type,
+        $.function,
+        $.interface,
+        $.effect,
+        $.effect_alias,
+      ),
 
     line_comment: ($) => token(seq("//", /.*/)),
 
@@ -115,6 +123,26 @@ module.exports = grammar({
         ")",
         optional(field("block_parameters", $.block_parameters)),
         optional(seq(":", field("return_type", $.return_type))),
+      ),
+
+    effect: ($) =>
+      seq(
+        "effect",
+        field("name", $.identifier),
+        optional(field("type_parameters", $.type_parameters)),
+        optional(seq("(", optional(field("parameters", $.parameters)), ")")),
+        optional(seq(":", field("return_type", $.return_type))),
+      ),
+
+    effect_alias: ($) =>
+      seq(
+        "effect",
+        field("name", $.identifier),
+        optional(field("type_parameters", $.type_parameters)),
+        "=",
+        "{",
+        field("effects", commaSep($.parameter_type)),
+        "}",
       ),
 
     _expression: ($) => choice($.block, $.number, $.not_implemented),
