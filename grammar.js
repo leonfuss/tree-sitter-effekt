@@ -13,9 +13,16 @@ module.exports = grammar({
       "case",
       "with",
       "do",
+      "while",
+      "val",
+      "var",
     ),
 
-  precedences: (_) => [["multiplication", "addition"]],
+  precedences: ($) => [
+    ["match", "assignment"],
+    ["multiplication", "addition"],
+    ["statement", "expression"],
+  ],
 
   rules: {
     source_file: ($) => repeat($._definition),
@@ -43,17 +50,13 @@ module.exports = grammar({
         ")",
       ),
 
-    // Record the type parameters
     type_parameters: ($) => seq("[", commaSep1($.generic_identifier), "]"),
 
-    // Define parameter list with possible trailing comma
     parameters: ($) => trailingCommaSep1($.parameter),
 
-    // Define a parameter
     parameter: ($) =>
       seq(field("name", $.identifier), ":", field("kind", $.parameter_type)),
 
-    // Define parameter type which may include generic arguments
     parameter_type: ($) =>
       seq(
         $.type_identifier,
@@ -94,11 +97,7 @@ module.exports = grammar({
     block_parameters: ($) => seq("{", $.parameters, "}"),
 
     return_type: ($) =>
-      seq(
-        $.type_identifier,
-        optional(seq("[", commaSep1($.generic_identifier), "]")),
-        optional(field("effekts", $.effekts)),
-      ),
+      seq($.parameter_type, optional(field("effekts", $.effekts))),
 
     effekts: ($) => seq("/", "{", commaSep1($.type_identifier), "}"),
 
@@ -145,28 +144,111 @@ module.exports = grammar({
         "}",
       ),
 
-    _expression: ($) => choice($.block, $.number, $.not_implemented),
+    _expression: ($) =>
+      prec(
+        "expression",
+        choice(
+          $.block,
+          $.number,
+          $.match_expression,
+          $.function_call,
+          $.identifier,
+          $.string,
+          $.array,
+          $.assignment,
+          $.binary_expression,
+          $.unary_expression,
+          $.not_implemented,
+        ),
+      ),
+
+    binary_expression: ($) =>
+      choice(
+        prec.left(1, seq($._expression, "and", $._expression)),
+        prec.left(2, seq($._expression, "is", $._expression)),
+        prec.left("addition", seq($._expression, "+", $._expression)),
+        prec.left("addition", seq($._expression, "-", $._expression)),
+        prec.left("multiplication", seq($._expression, "*", $._expression)),
+        prec.left("multiplication", seq($._expression, "/", $._expression)),
+      ),
+
+    unary_expression: ($) => prec.right(seq("do", $._expression)),
+
+    statement: ($) =>
+      prec(
+        "statement",
+        choice($.assignment, $.while_expression, $.expression_statement),
+      ),
+
+    expression_statement: ($) => $._expression,
+
+    assignment: ($) =>
+      prec.left(
+        "assignment",
+        seq(choice("val", "var"), $.identifier, "=", $._expression),
+      ),
+
+    while_expression: ($) => seq("while", $._expression, $.block),
+
+    match_expression: ($) =>
+      prec.left(
+        "match",
+        seq(
+          field("value", $._expression),
+          "match",
+          "{",
+          repeat1($.case_clause),
+          "}",
+        ),
+      ),
+
+    case_clause: ($) =>
+      seq(
+        "case",
+        field("pattern", $._pattern),
+        "=>",
+        field("body", $._expression),
+      ),
+
+    _pattern: ($) =>
+      choice(
+        $.number,
+        $.string,
+        $.identifier,
+        $.wildcard_pattern,
+        $.constructor_pattern,
+      ),
+
+    wildcard_pattern: ($) => "_",
+
+    constructor_pattern: ($) =>
+      seq(
+        field("constructor", $.type_identifier),
+        "(",
+        optional(commaSep1($._pattern)),
+        ")",
+      ),
+
+    block: ($) => seq("{", repeat($.statement), "}"),
+
+    function_call: ($) =>
+      seq(
+        field("function", $.identifier),
+        "(",
+        optional(commaSep($.argument)),
+        ")",
+      ),
+
+    argument: ($) => $._expression,
+
+    string: ($) => /"([^"\\]|\\.)*"/,
+
+    array: ($) => seq("[", optional(commaSep($._expression)), "]"),
 
     not_implemented: ($) => token(seq("<", ">")),
 
-    block: ($) => seq("{", optional($._block_content), "}"),
-
-    _block_content: ($) => repeat1(choice($._expression, $.statement)),
-
-    statement: ($) => choice($.assignment),
-    assignment: ($) =>
-      seq(
-        choice("val", "var"),
-        $.identifier,
-        "=",
-        choice($.expression, $.block),
-      ),
-
-    expression: ($) => choice($.number),
-
     number: ($) => token(/\d+/),
 
-    // Defining identifiers for type names and variable names
     generic_identifier: ($) => /[A-Za-z][a-zA-Z0-9_]*/,
     type_identifier: ($) => /[A-Za-z][a-zA-Z0-9_]*/,
     identifier: ($) => /[A-Za-z][a-zA-Z0-9_]*/,

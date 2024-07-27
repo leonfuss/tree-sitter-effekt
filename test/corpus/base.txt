@@ -157,7 +157,8 @@ interface FileNotFound {
                 (parameter_type
                   (type_identifier))))
             (return_type
-              (type_identifier))))))
+               (parameter_type
+                (type_identifier)))))))
 
 
 ==================
@@ -190,7 +191,8 @@ interface Net {
                   (type_identifier)
                   (generic_identifier))))
             (return_type
-              (type_identifier)
+               (parameter_type
+                (type_identifier))
               (effekts
                 (type_identifier))))
           (interface_method
@@ -205,7 +207,8 @@ interface Net {
                   (type_identifier)
                   (generic_identifier))))
             (return_type
-              (type_identifier)
+                (parameter_type
+                (type_identifier))
               (effekts
                 (type_identifier)
                 (type_identifier)))))))
@@ -255,7 +258,8 @@ effect DefaultIndent(): Int
       (effect
         (identifier)
         (return_type
-          (type_identifier))))
+           (parameter_type
+            (type_identifier)))))
 
 ==================
 Complex Effekt
@@ -280,4 +284,5 @@ effect FileNotFound[A](path: String, msg: A): Unit
             (parameter_type
               (type_identifier))))
         (return_type
-          (type_identifier))))
+          (parameter_type
+            (type_identifier)))))
