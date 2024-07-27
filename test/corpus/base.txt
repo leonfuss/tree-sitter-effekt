@@ -85,6 +85,20 @@ type List[A] {
 ))
 
 ==================
+Empty Function
+==================
+
+def foo() = {}
+
+---
+(source_file
+    (function
+         (identifier)
+         (block)
+     )
+)
+
+==================
 Function
 ==================
 
@@ -107,3 +121,77 @@ def add(a: Int, b: Int) = {}
          (block)
     )
 )
+
+==================
+Interface
+==================
+interface FileNotFound {
+  def FileNotFound(path: String): Unit
+}
+
+---
+
+ (source_file
+      (interface
+        (type_identifier)
+        (interface_methods
+          (interface_method
+            (identifier)
+            (parameters
+              (parameter
+                (identifier)
+                (parameter_type
+                  (type_identifier))))
+            (return_type
+              (type_identifier))))))
+
+
+==================
+Interface with Generics
+==================
+
+interface Net {
+  def send[A, L](value: A, receiver: Location[L]): Unit / { IO }
+  def recv[A, L](receiver: Location[L]): A / { IO, SomeError }
+}
+
+---
+  (source_file
+      (interface
+        (type_identifier)
+        (interface_methods
+          (interface_method
+            (identifier)
+            (type_parameters
+              (generic_identifier)
+              (generic_identifier))
+            (parameters
+              (parameter
+                (identifier)
+                (parameter_type
+                  (type_identifier)))
+              (parameter
+                (identifier)
+                (parameter_type
+                  (type_identifier)
+                  (generic_identifier))))
+            (return_type
+              (type_identifier)
+              (effekts
+                (type_identifier))))
+          (interface_method
+            (identifier)
+            (type_parameters
+              (generic_identifier)
+              (generic_identifier))
+            (parameters
+              (parameter
+                (identifier)
+                (parameter_type
+                  (type_identifier)
+                  (generic_identifier))))
+            (return_type
+              (type_identifier)
+              (effekts
+                (type_identifier)
+                (type_identifier)))))))

@@ -65,6 +65,21 @@
     }
   },
   {
+    "type": "effekts",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "type_identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "expression",
     "named": true,
     "fields": {},
@@ -123,7 +138,7 @@
       },
       "parameters": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "parameters",
@@ -157,6 +172,108 @@
     "type": "generic_identifier",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "identifier",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "interface",
+    "named": true,
+    "fields": {
+      "members": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "interface_methods",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "interface_method",
+    "named": true,
+    "fields": {
+      "block_parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "block_parameters",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "parameters",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "return_type",
+            "named": true
+          }
+        ]
+      },
+      "type_parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_parameters",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "interface_methods",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "interface_method",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "parameter",
@@ -257,7 +374,18 @@
   {
     "type": "return_type",
     "named": true,
-    "fields": {},
+    "fields": {
+      "effekts": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "effekts",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": true,
@@ -283,6 +411,10 @@
       "types": [
         {
           "type": "function",
+          "named": true
+        },
+        {
+          "type": "interface",
           "named": true
         },
         {
@@ -453,8 +585,8 @@
     "named": false
   },
   {
-    "type": "identifier",
-    "named": true
+    "type": "interface",
+    "named": false
   },
   {
     "type": "line_comment",

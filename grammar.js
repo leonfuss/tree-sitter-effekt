@@ -20,7 +20,8 @@ module.exports = grammar({
   rules: {
     source_file: ($) => repeat($._definition),
 
-    _definition: ($) => choice($.line_comment, $.record, $.type, $.function),
+    _definition: ($) =>
+      choice($.line_comment, $.record, $.type, $.function, $.interface),
 
     line_comment: ($) => token(seq("//", /.*/)),
 
@@ -72,7 +73,7 @@ module.exports = grammar({
         field("name", $.identifier),
         optional(field("type_parameters", $.type_parameters)),
         "(",
-        field("parameters", $.parameters),
+        optional(field("parameters", $.parameters)),
         ")",
         optional(field("block_parameters", $.block_parameters)),
         optional(seq(":", field("return_type", $.return_type))),
@@ -86,7 +87,32 @@ module.exports = grammar({
       seq(
         $.type_identifier,
         optional(seq("[", commaSep1($.generic_identifier), "]")),
-        optional(seq("/", "{", commaSep1($.type_identifier), "}")),
+        optional(field("effekts", $.effekts)),
+      ),
+
+    effekts: ($) => seq("/", "{", commaSep1($.type_identifier), "}"),
+
+    interface: ($) =>
+      seq(
+        "interface",
+        field("name", $.type_identifier),
+        "{",
+        optional(field("members", $.interface_methods)),
+        "}",
+      ),
+
+    interface_methods: ($) => repeat1($.interface_method),
+
+    interface_method: ($) =>
+      seq(
+        "def",
+        field("name", $.identifier),
+        optional(field("type_parameters", $.type_parameters)),
+        "(",
+        optional(field("parameters", $.parameters)),
+        ")",
+        optional(field("block_parameters", $.block_parameters)),
+        optional(seq(":", field("return_type", $.return_type))),
       ),
 
     _expression: ($) => choice($.block, $.number, $.not_implemented),
@@ -111,9 +137,9 @@ module.exports = grammar({
     number: ($) => token(/\d+/),
 
     // Defining identifiers for type names and variable names
-    generic_identifier: ($) => /[A-Z][a-zA-Z0-9_]*/,
-    type_identifier: ($) => /[A-Z][a-zA-Z0-9_]*/,
-    identifier: ($) => /[a-z][a-zA-Z0-9_]*/,
+    generic_identifier: ($) => /[A-Za-z][a-zA-Z0-9_]*/,
+    type_identifier: ($) => /[A-Za-z][a-zA-Z0-9_]*/,
+    identifier: ($) => /[A-Za-z][a-zA-Z0-9_]*/,
   },
 });
 
