@@ -506,3 +506,78 @@ def foo(x: (Int, Int)) = <>
               (parameter_type
                 (type_identifier)))))
         (not_implemented)))
+
+==================
+try with handler function and resume
+==================
+
+def foo() = {
+    try {
+       bar()
+    } with Effect {
+        def baz(msg, it) = resume(it)
+     }
+}
+
+---
+ (source_file
+      (function
+        (identifier)
+        (block
+          (statement
+            (expression_statement
+              (try_expression
+                (block
+                  (statement
+                    (expression_statement
+                      (function_call
+                        (identifier)))))
+                (with_handler
+                  (parameter_type
+                    (type_identifier))
+                  (handler_function
+                    (identifier)
+                    (handler_function_parameters
+                      (identifier)
+                      (identifier))
+                       (resume
+                      (identifier))))))))))
+==================
+try with annonymous handler function
+==================
+def foo() = {
+    try {
+    meanRatio(4.2, 1.3)
+    } with Exc {
+       (msg) =>  println(msg)
+    }
+}
+
+---
+
+(source_file
+      (function
+        (identifier)
+        (block
+          (statement
+            (expression_statement
+              (try_expression
+                (block
+                  (statement
+                    (expression_statement
+                      (function_call
+                        (identifier)
+                        (argument
+                          (number))
+                        (argument
+                          (number))))))
+                (with_handler
+                  (parameter_type
+                    (type_identifier))
+                  (anonymous_function
+                    (handler_function_parameters
+                      (identifier))
+                    (function_call
+                      (identifier)
+                      (argument
+                        (identifier)))))))))))

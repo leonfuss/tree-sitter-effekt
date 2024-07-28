@@ -1,5 +1,88 @@
 [
   {
+    "type": "anonymous_function",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "array",
+          "named": true
+        },
+        {
+          "type": "assignment",
+          "named": true
+        },
+        {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "call_chain",
+          "named": true
+        },
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
+          "type": "function_call",
+          "named": true
+        },
+        {
+          "type": "handler_function_parameters",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "match_expression",
+          "named": true
+        },
+        {
+          "type": "not_implemented",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "resume",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "try_expression",
+          "named": true
+        },
+        {
+          "type": "tuple_expression",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "argument",
     "named": true,
     "fields": {},
@@ -56,7 +139,15 @@
           "named": true
         },
         {
+          "type": "resume",
+          "named": true
+        },
+        {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "try_expression",
           "named": true
         },
         {
@@ -127,7 +218,15 @@
           "named": true
         },
         {
+          "type": "resume",
+          "named": true
+        },
+        {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "try_expression",
           "named": true
         },
         {
@@ -198,7 +297,15 @@
           "named": true
         },
         {
+          "type": "resume",
+          "named": true
+        },
+        {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "try_expression",
           "named": true
         },
         {
@@ -273,7 +380,15 @@
           "named": true
         },
         {
+          "type": "resume",
+          "named": true
+        },
+        {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "try_expression",
           "named": true
         },
         {
@@ -398,7 +513,15 @@
             "named": true
           },
           {
+            "type": "resume",
+            "named": true
+          },
+          {
             "type": "string",
+            "named": true
+          },
+          {
+            "type": "try_expression",
             "named": true
           },
           {
@@ -661,7 +784,15 @@
           "named": true
         },
         {
+          "type": "resume",
+          "named": true
+        },
+        {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "try_expression",
           "named": true
         },
         {
@@ -764,7 +895,15 @@
             "named": true
           },
           {
+            "type": "resume",
+            "named": true
+          },
+          {
             "type": "string",
+            "named": true
+          },
+          {
+            "type": "try_expression",
             "named": true
           },
           {
@@ -834,6 +973,137 @@
         },
         {
           "type": "block",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "handler_function",
+    "named": true,
+    "fields": {
+      "_type_parameters": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": ",",
+            "named": false
+          },
+          {
+            "type": "[",
+            "named": false
+          },
+          {
+            "type": "]",
+            "named": false
+          },
+          {
+            "type": "generic_identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "handler_function_parameters",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "array",
+          "named": true
+        },
+        {
+          "type": "assignment",
+          "named": true
+        },
+        {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "call_chain",
+          "named": true
+        },
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
+          "type": "function_call",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "match_expression",
+          "named": true
+        },
+        {
+          "type": "not_implemented",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "resume",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "try_expression",
+          "named": true
+        },
+        {
+          "type": "tuple_expression",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "handler_function_parameters",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "parameter_type",
           "named": true
         }
       ]
@@ -1005,7 +1275,15 @@
             "named": true
           },
           {
+            "type": "resume",
+            "named": true
+          },
+          {
             "type": "string",
+            "named": true
+          },
+          {
+            "type": "try_expression",
             "named": true
           },
           {
@@ -1121,6 +1399,85 @@
     }
   },
   {
+    "type": "resume",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "array",
+          "named": true
+        },
+        {
+          "type": "assignment",
+          "named": true
+        },
+        {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "call_chain",
+          "named": true
+        },
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
+          "type": "function_call",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "match_expression",
+          "named": true
+        },
+        {
+          "type": "not_implemented",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "resume",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "try_expression",
+          "named": true
+        },
+        {
+          "type": "tuple_expression",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "return_type",
     "named": true,
     "fields": {
@@ -1202,7 +1559,30 @@
           "named": true
         },
         {
+          "type": "function",
+          "named": true
+        },
+        {
           "type": "while_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "try_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "with_handler",
           "named": true
         }
       ]
@@ -1265,7 +1645,15 @@
           "named": true
         },
         {
+          "type": "resume",
+          "named": true
+        },
+        {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "try_expression",
           "named": true
         },
         {
@@ -1472,7 +1860,15 @@
           "named": true
         },
         {
+          "type": "resume",
+          "named": true
+        },
+        {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "try_expression",
           "named": true
         },
         {
@@ -1543,7 +1939,15 @@
           "named": true
         },
         {
+          "type": "resume",
+          "named": true
+        },
+        {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "try_expression",
           "named": true
         },
         {
@@ -1552,6 +1956,29 @@
         },
         {
           "type": "unary_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "with_handler",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "anonymous_function",
+          "named": true
+        },
+        {
+          "type": "handler_function",
+          "named": true
+        },
+        {
+          "type": "parameter_type",
           "named": true
         }
       ]
@@ -1674,11 +2101,19 @@
     "named": false
   },
   {
+    "type": "resume",
+    "named": false
+  },
+  {
     "type": "string",
     "named": true
   },
   {
     "type": "true",
+    "named": false
+  },
+  {
+    "type": "try",
     "named": false
   },
   {
@@ -1704,6 +2139,10 @@
   {
     "type": "wildcard_pattern",
     "named": true
+  },
+  {
+    "type": "with",
+    "named": false
   },
   {
     "type": "{",

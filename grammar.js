@@ -11,11 +11,13 @@ module.exports = grammar({
       "else",
       "match",
       "case",
+      "try",
       "with",
       "do",
       "while",
       "val",
       "var",
+      "resume",
     ),
 
   precedences: ($) => [
@@ -153,6 +155,7 @@ module.exports = grammar({
           $.boolean,
           $.tuple_expression,
           $.match_expression,
+          $.try_expression,
           $.function_call,
           $.constructor,
           $._identifier,
@@ -162,6 +165,7 @@ module.exports = grammar({
           $.binary_expression,
           $.unary_expression,
           $.not_implemented,
+          $.resume,
           $.call_chain,
         ),
       ),
@@ -183,10 +187,17 @@ module.exports = grammar({
     statement: ($) =>
       prec(
         "statement",
-        choice($.assignment, $.while_expression, $.expression_statement),
+        choice(
+          $.assignment,
+          $.while_expression,
+          $.expression_statement,
+          $.function,
+        ),
       ),
 
     expression_statement: ($) => $._expression,
+
+    resume: ($) => seq("resume", "(", $._expression, ")"),
 
     assignment: ($) =>
       prec.left(
@@ -274,6 +285,41 @@ module.exports = grammar({
         ),
       ),
 
+    try_expression: ($) => seq("try", $.block, repeat1($.with_handler)),
+
+    with_handler: ($) =>
+      seq(
+        "with",
+        $.parameter_type,
+        "{",
+        choice($.anonymous_function, repeat1($.handler_function)),
+        "}",
+      ),
+
+    handler_function: ($) =>
+      seq(
+        "def",
+        $.identifier,
+        optional(field("_type_parameters", $._type_parameters)),
+        "(",
+        optional(field("parameters", $.handler_function_parameters)),
+        ")",
+        "=",
+        $._expression,
+      ),
+
+    anonymous_function: ($) =>
+      seq(
+        "(",
+        optional($.handler_function_parameters),
+        ")",
+        "=>",
+        $._expression,
+      ),
+
+    handler_function_parameters: ($) =>
+      commaSep1(seq($.identifier, optional(seq(":", $.parameter_type)))),
+
     call_chain: ($) => seq($.identifier, repeat1(seq(".", $.function_call))),
 
     argument: ($) => $._expression,
@@ -284,7 +330,7 @@ module.exports = grammar({
 
     not_implemented: ($) => token(seq("<", ">")),
 
-    number: ($) => token(/\d+/),
+    number: ($) => token(/[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?/),
 
     boolean: ($) => choice(token("true"), token("false")),
 
