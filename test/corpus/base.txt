@@ -611,3 +611,22 @@ def foo(x: Double) = {
                 (identifier)
                 (pre_arg_function_call
                   (identifier))))))))
+
+==================
+line comment
+==================
+// this is a comment
+---
+(source_file
+  (line_comment))
+
+
+==================
+multiline comment
+==================
+/* this is a
+* multiline comment */
+
+---
+(source_file
+  (multiline_comment))

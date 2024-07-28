@@ -37,6 +37,7 @@ module.exports = grammar({
     _definition: ($) =>
       choice(
         $.line_comment,
+        $.multiline_comment,
         $.record,
         $.type,
         $.function,
@@ -46,6 +47,8 @@ module.exports = grammar({
       ),
 
     line_comment: ($) => token(seq("//", /.*/)),
+    multiline_comment: ($) =>
+      token(seq("/*", repeat(choice(seq("*", /[^\n]/), /[^*]/)), "*/")),
 
     record: ($) =>
       seq(
