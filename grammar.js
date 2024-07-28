@@ -58,9 +58,15 @@ module.exports = grammar({
     parameters: ($) => commaSep1($.parameter),
 
     parameter: ($) =>
-      seq(field("name", $.identifier), ":", field("kind", $.parameter_type)),
+      seq(
+        field("name", $.identifier),
+        ":",
+        field("kind", choice($.parameter_type, $.tuple_parameter_type)),
+      ),
 
     parameter_type: ($) => seq($.type_identifier, optional($._type_parameters)),
+
+    tuple_parameter_type: ($) => seq("(", commaSep1($.parameter_type), ")"),
 
     type: ($) =>
       seq("type", $.parameter_type, choice($._simple_type, $._complex_type)),
@@ -240,7 +246,7 @@ module.exports = grammar({
         ")",
       ),
 
-    block: ($) => seq("{", repeat($.statement), "}"),
+    block: ($) => seq("{", optSemicolonNewlineSep($.statement), "}"),
 
     tuple_expression: ($) =>
       prec("tuple", seq("(", commaSep1($._expression), ")")),
@@ -260,7 +266,7 @@ module.exports = grammar({
       prec.left(
         "function_call",
         seq(
-          field("function", $.function_identifier),
+          field("function", $.identifier),
           choice(
             seq("(", optional(commaSep($.argument)), ")"),
             repeat1($.block),
@@ -285,7 +291,6 @@ module.exports = grammar({
     generic_identifier: ($) => /[A-Za-z][a-zA-Z0-9_]*/,
     type_identifier: ($) => /[A-Z][a-zA-Z0-9_]*/,
     identifier: ($) => /[A-za-z][a-zA-Z0-9_]*/,
-    function_identifier: ($) => /[a-z][a-zA-Z0-9_]*/,
   },
 });
 
@@ -307,6 +312,14 @@ function trailingCommaSep1(rule) {
 
 function semilicolonSep1(rule) {
   return sep1(";", rule);
+}
+
+function optSemicolonNewlineSep(rule) {
+  return optional(semilicolonSep1(rule));
+}
+
+function semicolonNewlineSep(rule) {
+  return sep1(choice(";", /(\n)/), rule);
 }
 
 function trailingSep1(delimiter, rule) {

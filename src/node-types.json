@@ -818,7 +818,7 @@
         "required": true,
         "types": [
           {
-            "type": "function_identifier",
+            "type": "identifier",
             "named": true
           }
         ]
@@ -1040,6 +1040,10 @@
         "types": [
           {
             "type": "parameter_type",
+            "named": true
+          },
+          {
+            "type": "tuple_parameter_type",
             "named": true
           }
         ]
@@ -1285,6 +1289,21 @@
       "types": [
         {
           "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "tuple_parameter_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "parameter_type",
           "named": true
         }
       ]
@@ -1617,10 +1636,6 @@
   {
     "type": "false",
     "named": false
-  },
-  {
-    "type": "function_identifier",
-    "named": true
   },
   {
     "type": "generic_identifier",

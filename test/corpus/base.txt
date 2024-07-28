@@ -184,7 +184,6 @@ interface Net {
   def send[A, L](value: A, receiver: Location[L]): Unit / { IO }
   def recv[A, L](receiver: Location[L]): A / { IO, SomeError }
 }
-
 ---
   (source_file
       (interface
@@ -348,3 +347,162 @@ def isTrue() = true
    (function
        (identifier)
        (boolean)))
+
+
+==================
+Function precedence
+==================
+
+def foo() = {
+   val x = println(1)
+}
+
+---
+ (source_file
+      (function
+        (identifier)
+        (block
+          (statement
+            (assignment
+              (identifier)
+              (function_call
+                (identifier)
+                (argument
+                  (number))))))))
+
+
+==================
+Constructor assignment
+==================
+
+def foo() = {
+   val x = A()
+}
+
+---
+    (source_file
+      (function
+        (identifier)
+        (block
+          (statement
+            (assignment
+              (identifier)
+              (constructor
+                (type_identifier)))))))
+
+==================
+do SomeEffect
+==================
+
+def foo(): Unit / {SomeEffect} = {
+   do SomeEffect()
+}
+
+---
+  (source_file
+      (function
+        (identifier)
+        (return_type
+          (parameter_type
+            (type_identifier))
+          (effects
+            (type_identifier)))
+        (block
+          (statement
+            (expression_statement
+              (unary_expression
+                (constructor
+                  (type_identifier))))))))
+
+==================
+Simple matching
+==================
+def foo(x: Int) = {
+    l match {
+        case 1 => true
+        case 2 => false
+    }
+}
+
+---
+
+(source_file
+      (function
+        (identifier)
+        (parameters
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier))))
+        (block
+          (statement
+            (expression_statement
+              (match_expression
+                (identifier)
+                (case_clause
+                  (number)
+                  (boolean))
+                (case_clause
+                  (number)
+                  (boolean))))))))
+
+==================
+Tuple matching
+==================
+def foo(x: Int, y: Int) = {
+    (x,y) match {
+        case (1, 2) => true
+        case (2, 3) => false
+    }
+}
+---
+(source_file
+      (function
+        (identifier)
+        (parameters
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier)))
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier))))
+        (block
+          (statement
+            (expression_statement
+              (match_expression
+                (tuple_expression
+                  (identifier)
+                  (identifier))
+                (case_clause
+                  (tuple_pattern
+                    (number)
+                    (number))
+                  (boolean))
+                (case_clause
+                  (tuple_pattern
+                    (number)
+                    (number))
+                  (boolean))))))))
+
+==================
+Tuple function argument
+==================
+
+def foo(x: (Int, Int)) = <>
+
+---
+
+(source_file
+      (function
+        (identifier)
+        (parameters
+          (parameter
+            (identifier)
+            (tuple_parameter_type
+              (parameter_type
+                (type_identifier))
+              (parameter_type
+                (type_identifier)))))
+        (not_implemented)))
