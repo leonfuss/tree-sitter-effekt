@@ -5,7 +5,8 @@ record Position()
 ---
 (source_file
     (record
-       (type_identifier)))
+       (parameter_type
+         (type_identifier))))
 
 ==================
 Record with Generics
@@ -17,8 +18,8 @@ record Position [A, B](line: List[A], col: Int, index: Int)
 
  (source_file
       (record
+       (parameter_type
         (type_identifier)
-        (type_parameters
           (generic_identifier)
           (generic_identifier))
         (parameters
@@ -46,7 +47,8 @@ type Locations = List[SomeLocation]
 
     (source_file
       (type
-        (type_identifier)
+        (parameter_type
+        (type_identifier))
         (parameter_type
           (type_identifier)
           (generic_identifier))))
@@ -58,7 +60,8 @@ type List {}
 ---
 (source_file
   (type
-    (type_identifier)))
+    (parameter_type
+    (type_identifier))))
 
 ==================
 Type with Generics
@@ -73,9 +76,9 @@ type List[A] {
 
 (source_file
   (type
+    (parameter_type
     (type_identifier)
-    (type_parameters
-        (generic_identifier))
+    (generic_identifier))
     (type_members
         (type_member
             (type_identifier))
@@ -189,9 +192,8 @@ interface Net {
         (interface_methods
           (interface_method
             (identifier)
-            (type_parameters
               (generic_identifier)
-              (generic_identifier))
+              (generic_identifier)
             (parameters
               (parameter
                 (identifier)
@@ -205,13 +207,12 @@ interface Net {
             (return_type
                (parameter_type
                 (type_identifier))
-              (effekts
+              (effects
                 (type_identifier))))
           (interface_method
             (identifier)
-            (type_parameters
               (generic_identifier)
-              (generic_identifier))
+              (generic_identifier)
             (parameters
               (parameter
                 (identifier)
@@ -221,7 +222,7 @@ interface Net {
             (return_type
                 (parameter_type
                 (type_identifier))
-              (effekts
+              (effects
                 (type_identifier)
                 (type_identifier)))))))
 
@@ -234,7 +235,8 @@ effect IO = { Read, Write }
 ---
 (source_file
       (effect_alias
-        (type_identifier)
+       (parameter_type
+        (type_identifier))
          (parameter_type
           (type_identifier))
         (parameter_type
@@ -250,8 +252,8 @@ effect IO[A] = { Read, Write[A] }
 ---
  (source_file
       (effect_alias
+       (parameter_type
         (type_identifier)
-        (type_parameters
           (generic_identifier))
         (parameter_type
           (type_identifier))
@@ -268,7 +270,8 @@ effect DefaultIndent(): Int
 ---
 (source_file
       (effect
-        (type_identifier)
+      (parameter_type
+        (type_identifier))
         (return_type
            (parameter_type
             (type_identifier)))))
@@ -283,8 +286,8 @@ effect FileNotFound[A](path: String, msg: A): Unit
 
  (source_file
       (effect
+      (parameter_type
         (type_identifier)
-        (type_parameters
           (generic_identifier))
         (parameters
           (parameter

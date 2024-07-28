@@ -24,6 +24,8 @@ module.exports = grammar({
     ["statement", "expression"],
     ["function_call", "expression"],
     ["function_call", "constructor"],
+    ["function_call", "identifier"],
+    ["constructor_call", "tuple"],
   ],
 
   rules: {
@@ -45,33 +47,23 @@ module.exports = grammar({
     record: ($) =>
       seq(
         "record",
-        field("name", $.type_identifier),
-        optional(field("parameters", $.type_parameters)),
+        $.parameter_type,
         "(",
         optional(field("members", $.parameters)),
         ")",
       ),
 
-    type_parameters: ($) => seq("[", commaSep1($.generic_identifier), "]"),
+    _type_parameters: ($) => seq("[", commaSep1($.generic_identifier), "]"),
 
-    parameters: ($) => trailingCommaSep1($.parameter),
+    parameters: ($) => commaSep1($.parameter),
 
     parameter: ($) =>
       seq(field("name", $.identifier), ":", field("kind", $.parameter_type)),
 
-    parameter_type: ($) =>
-      seq(
-        $.type_identifier,
-        optional(seq("[", commaSep1($.generic_identifier), "]")),
-      ),
+    parameter_type: ($) => seq($.type_identifier, optional($._type_parameters)),
 
     type: ($) =>
-      seq(
-        "type",
-        field("name", $.type_identifier),
-        optional(field("parameters", $.type_parameters)),
-        choice($._simple_type, $._complex_type),
-      ),
+      seq("type", $.parameter_type, choice($._simple_type, $._complex_type)),
 
     _simple_type: ($) => seq("=", $.parameter_type),
     _complex_type: ($) =>
@@ -82,11 +74,12 @@ module.exports = grammar({
     type_member: ($) =>
       seq(field("member", $.type_identifier), "(", optional($.parameters), ")"),
 
+    // TODO: rewrite block parameters
     function: ($) =>
       seq(
         "def",
         field("name", $.identifier),
-        optional(field("type_parameters", $.type_parameters)),
+        optional(field("_type_parameters", $._type_parameters)),
         "(",
         optional(field("parameters", $.parameters)),
         ")",
@@ -96,12 +89,13 @@ module.exports = grammar({
         field("body", $._expression),
       ),
 
+    // todo rewrite block parameters to allow for higher order functions
     block_parameters: ($) => seq("{", $.parameters, "}"),
 
     return_type: ($) =>
-      seq($.parameter_type, optional(field("effekts", $.effekts))),
+      seq($.parameter_type, optional(field("effects", $.effects))),
 
-    effekts: ($) => seq("/", "{", commaSep1($.type_identifier), "}"),
+    effects: ($) => seq("/", "{", commaSep1($.type_identifier), "}"),
 
     interface: ($) =>
       seq(
@@ -118,7 +112,7 @@ module.exports = grammar({
       seq(
         "def",
         field("name", $.identifier),
-        optional(field("type_parameters", $.type_parameters)),
+        optional(field("_type_parameters", $._type_parameters)),
         "(",
         optional(field("parameters", $.parameters)),
         ")",
@@ -129,8 +123,7 @@ module.exports = grammar({
     effect: ($) =>
       seq(
         "effect",
-        field("name", $.type_identifier),
-        optional(field("type_parameters", $.type_parameters)),
+        $.parameter_type,
         optional(seq("(", optional(field("parameters", $.parameters)), ")")),
         optional(seq(":", field("return_type", $.return_type))),
       ),
@@ -138,8 +131,7 @@ module.exports = grammar({
     effect_alias: ($) =>
       seq(
         "effect",
-        field("name", $.type_identifier),
-        optional(field("type_parameters", $.type_parameters)),
+        $.parameter_type,
         "=",
         "{",
         field("effects", commaSep($.parameter_type)),
@@ -157,7 +149,7 @@ module.exports = grammar({
           $.match_expression,
           $.function_call,
           $.constructor,
-          $.identifier,
+          $._identifier,
           $.string,
           $.array,
           $.assignment,
@@ -167,6 +159,8 @@ module.exports = grammar({
           $.call_chain,
         ),
       ),
+
+    _identifier: ($) => prec("identifier", $.identifier),
 
     binary_expression: ($) =>
       choice(
@@ -248,7 +242,8 @@ module.exports = grammar({
 
     block: ($) => seq("{", repeat($.statement), "}"),
 
-    tuple_expression: ($) => seq("(", commaSep1($._expression), ")"),
+    tuple_expression: ($) =>
+      prec("tuple", seq("(", commaSep1($._expression), ")")),
 
     constructor: ($) =>
       prec(
