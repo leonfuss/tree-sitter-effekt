@@ -618,15 +618,25 @@ line comment
 // this is a comment
 ---
 (source_file
-  (line_comment))
+  (comment))
 
 
 ==================
 multiline comment
 ==================
-/* this is a
-* multiline comment */
+/* */
+/* This is a comment
+*
+*/
 
+def foo() = <>
+
+/* */
 ---
-(source_file
-  (multiline_comment))
+  (source_file
+      (comment)
+      (comment)
+      (function
+        (identifier)
+        (not_implemented))
+      (comment))

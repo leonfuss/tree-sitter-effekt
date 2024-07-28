@@ -36,8 +36,7 @@ module.exports = grammar({
 
     _definition: ($) =>
       choice(
-        $.line_comment,
-        $.multiline_comment,
+        $.comment,
         $.record,
         $.type,
         $.function,
@@ -46,9 +45,14 @@ module.exports = grammar({
         $.effect_alias,
       ),
 
-    line_comment: ($) => token(seq("//", /.*/)),
-    multiline_comment: ($) =>
-      token(seq("/*", repeat(choice(seq("*", /[^\n]/), /[^*]/)), "*/")),
+    // https://stackoverflow.com/questions/13014947/regex-to-match-a-c-style-multiline-comment/36328890#36328890
+    comment: (_) =>
+      token(
+        choice(
+          seq("//", /[^\r\n\u2028\u2029]*/),
+          seq("/*", /[^*]*\*+([^/*][^*]*\*+)*/, "/"),
+        ),
+      ),
 
     record: ($) =>
       seq(

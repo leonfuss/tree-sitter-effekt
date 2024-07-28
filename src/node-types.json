@@ -1531,6 +1531,10 @@
       "required": false,
       "types": [
         {
+          "type": "comment",
+          "named": true
+        },
+        {
           "type": "effect",
           "named": true
         },
@@ -1544,14 +1548,6 @@
         },
         {
           "type": "interface",
-          "named": true
-        },
-        {
-          "type": "line_comment",
-          "named": true
-        },
-        {
-          "type": "multiline_comment",
           "named": true
         },
         {
@@ -2072,6 +2068,10 @@
     "named": false
   },
   {
+    "type": "comment",
+    "named": true
+  },
+  {
     "type": "def",
     "named": false
   },
@@ -2104,16 +2104,8 @@
     "named": false
   },
   {
-    "type": "line_comment",
-    "named": true
-  },
-  {
     "type": "match",
     "named": false
-  },
-  {
-    "type": "multiline_comment",
-    "named": true
   },
   {
     "type": "not_implemented",
