@@ -22,6 +22,8 @@ module.exports = grammar({
     ["match", "assignment"],
     ["multiplication", "addition"],
     ["statement", "expression"],
+    ["function_call", "expression"],
+    ["function_call", "constructor"],
   ],
 
   rules: {
@@ -151,8 +153,10 @@ module.exports = grammar({
           $.block,
           $.number,
           $.boolean,
+          $.tuple_expression,
           $.match_expression,
           $.function_call,
+          $.constructor,
           $.identifier,
           $.string,
           $.array,
@@ -160,6 +164,7 @@ module.exports = grammar({
           $.binary_expression,
           $.unary_expression,
           $.not_implemented,
+          $.call_chain,
         ),
       ),
 
@@ -186,8 +191,15 @@ module.exports = grammar({
     assignment: ($) =>
       prec.left(
         "assignment",
-        seq(choice("val", "var"), $.identifier, "=", $._expression),
+        seq(
+          choice("val", "var"),
+          choice($.identifier, $.tuple_identifier),
+          "=",
+          $._expression,
+        ),
       ),
+
+    tuple_identifier: ($) => seq("(", commaSep1($.identifier), ")"),
 
     while_expression: ($) => seq("while", $._expression, $.block),
 
@@ -218,10 +230,13 @@ module.exports = grammar({
         $.string,
         $.identifier,
         $.wildcard_pattern,
+        $.tuple_pattern,
         $.constructor_pattern,
       ),
 
     wildcard_pattern: ($) => "_",
+
+    tuple_pattern: ($) => seq("(", commaSep1($._pattern), ")"),
 
     constructor_pattern: ($) =>
       seq(
@@ -233,13 +248,32 @@ module.exports = grammar({
 
     block: ($) => seq("{", repeat($.statement), "}"),
 
-    function_call: ($) =>
-      seq(
-        field("function", $.identifier),
-        "(",
-        optional(commaSep($.argument)),
-        ")",
+    tuple_expression: ($) => seq("(", commaSep1($._expression), ")"),
+
+    constructor: ($) =>
+      prec(
+        "constructor",
+        seq(
+          field("name", $.type_identifier),
+          "(",
+          optional(commaSep($.argument)),
+          ")",
+        ),
       ),
+
+    function_call: ($) =>
+      prec.left(
+        "function_call",
+        seq(
+          field("function", $.function_identifier),
+          choice(
+            seq("(", optional(commaSep($.argument)), ")"),
+            repeat1($.block),
+          ),
+        ),
+      ),
+
+    call_chain: ($) => seq($.identifier, repeat1(seq(".", $.function_call))),
 
     argument: ($) => $._expression,
 
@@ -254,8 +288,9 @@ module.exports = grammar({
     boolean: ($) => choice(token("true"), token("false")),
 
     generic_identifier: ($) => /[A-Za-z][a-zA-Z0-9_]*/,
-    type_identifier: ($) => /[A-Za-z][a-zA-Z0-9_]*/,
-    identifier: ($) => /[A-Za-z][a-zA-Z0-9_]*/,
+    type_identifier: ($) => /[A-Z][a-zA-Z0-9_]*/,
+    identifier: ($) => /[A-za-z][a-zA-Z0-9_]*/,
+    function_identifier: ($) => /[a-z][a-zA-Z0-9_]*/,
   },
 });
 

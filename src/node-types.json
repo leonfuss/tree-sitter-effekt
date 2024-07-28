@@ -28,6 +28,14 @@
           "named": true
         },
         {
+          "type": "call_chain",
+          "named": true
+        },
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
           "type": "function_call",
           "named": true
         },
@@ -49,6 +57,10 @@
         },
         {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple_expression",
           "named": true
         },
         {
@@ -87,6 +99,14 @@
           "named": true
         },
         {
+          "type": "call_chain",
+          "named": true
+        },
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
           "type": "function_call",
           "named": true
         },
@@ -108,6 +128,10 @@
         },
         {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple_expression",
           "named": true
         },
         {
@@ -146,6 +170,14 @@
           "named": true
         },
         {
+          "type": "call_chain",
+          "named": true
+        },
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
           "type": "function_call",
           "named": true
         },
@@ -167,6 +199,14 @@
         },
         {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple_expression",
+          "named": true
+        },
+        {
+          "type": "tuple_identifier",
           "named": true
         },
         {
@@ -205,6 +245,14 @@
           "named": true
         },
         {
+          "type": "call_chain",
+          "named": true
+        },
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
           "type": "function_call",
           "named": true
         },
@@ -226,6 +274,10 @@
         },
         {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple_expression",
           "named": true
         },
         {
@@ -271,6 +323,25 @@
     "fields": {}
   },
   {
+    "type": "call_chain",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "function_call",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "case_clause",
     "named": true,
     "fields": {
@@ -299,6 +370,14 @@
             "named": true
           },
           {
+            "type": "call_chain",
+            "named": true
+          },
+          {
+            "type": "constructor",
+            "named": true
+          },
+          {
             "type": "function_call",
             "named": true
           },
@@ -320,6 +399,10 @@
           },
           {
             "type": "string",
+            "named": true
+          },
+          {
+            "type": "tuple_expression",
             "named": true
           },
           {
@@ -353,11 +436,41 @@
             "named": true
           },
           {
+            "type": "tuple_pattern",
+            "named": true
+          },
+          {
             "type": "wildcard_pattern",
             "named": true
           }
         ]
       }
+    }
+  },
+  {
+    "type": "constructor",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "argument",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -397,6 +510,10 @@
         },
         {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple_pattern",
           "named": true
         },
         {
@@ -536,6 +653,14 @@
           "named": true
         },
         {
+          "type": "call_chain",
+          "named": true
+        },
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
           "type": "function_call",
           "named": true
         },
@@ -557,6 +682,10 @@
         },
         {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple_expression",
           "named": true
         },
         {
@@ -605,6 +734,14 @@
             "named": true
           },
           {
+            "type": "call_chain",
+            "named": true
+          },
+          {
+            "type": "constructor",
+            "named": true
+          },
+          {
             "type": "function_call",
             "named": true
           },
@@ -626,6 +763,10 @@
           },
           {
             "type": "string",
+            "named": true
+          },
+          {
+            "type": "tuple_expression",
             "named": true
           },
           {
@@ -685,7 +826,7 @@
         "required": true,
         "types": [
           {
-            "type": "identifier",
+            "type": "function_identifier",
             "named": true
           }
         ]
@@ -698,19 +839,13 @@
         {
           "type": "argument",
           "named": true
+        },
+        {
+          "type": "block",
+          "named": true
         }
       ]
     }
-  },
-  {
-    "type": "generic_identifier",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "identifier",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "interface",
@@ -838,6 +973,14 @@
             "named": true
           },
           {
+            "type": "call_chain",
+            "named": true
+          },
+          {
+            "type": "constructor",
+            "named": true
+          },
+          {
             "type": "function_call",
             "named": true
           },
@@ -859,6 +1002,10 @@
           },
           {
             "type": "string",
+            "named": true
+          },
+          {
+            "type": "tuple_expression",
             "named": true
           },
           {
@@ -1064,6 +1211,131 @@
     }
   },
   {
+    "type": "tuple_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "array",
+          "named": true
+        },
+        {
+          "type": "assignment",
+          "named": true
+        },
+        {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "call_chain",
+          "named": true
+        },
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
+          "type": "function_call",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "match_expression",
+          "named": true
+        },
+        {
+          "type": "not_implemented",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple_expression",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "tuple_identifier",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "tuple_pattern",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "constructor_pattern",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple_pattern",
+          "named": true
+        },
+        {
+          "type": "wildcard_pattern",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "type",
     "named": true,
     "fields": {
@@ -1108,11 +1380,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "type_identifier",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "type_member",
@@ -1199,6 +1466,14 @@
           "named": true
         },
         {
+          "type": "call_chain",
+          "named": true
+        },
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
           "type": "function_call",
           "named": true
         },
@@ -1220,6 +1495,10 @@
         },
         {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple_expression",
           "named": true
         },
         {
@@ -1258,6 +1537,14 @@
           "named": true
         },
         {
+          "type": "call_chain",
+          "named": true
+        },
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
           "type": "function_call",
           "named": true
         },
@@ -1279,6 +1566,10 @@
         },
         {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple_expression",
           "named": true
         },
         {
@@ -1310,6 +1601,10 @@
   },
   {
     "type": "-",
+    "named": false
+  },
+  {
+    "type": ".",
     "named": false
   },
   {
@@ -1365,6 +1660,18 @@
     "named": false
   },
   {
+    "type": "function_identifier",
+    "named": true
+  },
+  {
+    "type": "generic_identifier",
+    "named": true
+  },
+  {
+    "type": "identifier",
+    "named": true
+  },
+  {
     "type": "interface",
     "named": false
   },
@@ -1403,6 +1710,10 @@
   {
     "type": "type",
     "named": false
+  },
+  {
+    "type": "type_identifier",
+    "named": true
   },
   {
     "type": "val",
