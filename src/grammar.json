@@ -953,6 +953,10 @@
           },
           {
             "type": "SYMBOL",
+            "name": "boolean"
+          },
+          {
+            "type": "SYMBOL",
             "name": "match_expression"
           },
           {
@@ -1288,6 +1292,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "boolean"
+        },
+        {
+          "type": "SYMBOL",
           "name": "string"
         },
         {
@@ -1528,6 +1536,25 @@
         "type": "PATTERN",
         "value": "\\d+"
       }
+    },
+    "boolean": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "true"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "false"
+          }
+        }
+      ]
     },
     "generic_identifier": {
       "type": "PATTERN",

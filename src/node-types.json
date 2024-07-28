@@ -24,6 +24,10 @@
           "named": true
         },
         {
+          "type": "boolean",
+          "named": true
+        },
+        {
           "type": "function_call",
           "named": true
         },
@@ -76,6 +80,10 @@
         },
         {
           "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
           "named": true
         },
         {
@@ -134,6 +142,10 @@
           "named": true
         },
         {
+          "type": "boolean",
+          "named": true
+        },
+        {
           "type": "function_call",
           "named": true
         },
@@ -186,6 +198,10 @@
         },
         {
           "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
           "named": true
         },
         {
@@ -250,6 +266,11 @@
     }
   },
   {
+    "type": "boolean",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "case_clause",
     "named": true,
     "fields": {
@@ -271,6 +292,10 @@
           },
           {
             "type": "block",
+            "named": true
+          },
+          {
+            "type": "boolean",
             "named": true
           },
           {
@@ -307,6 +332,10 @@
         "multiple": false,
         "required": true,
         "types": [
+          {
+            "type": "boolean",
+            "named": true
+          },
           {
             "type": "constructor_pattern",
             "named": true
@@ -350,6 +379,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "boolean",
+          "named": true
+        },
         {
           "type": "constructor_pattern",
           "named": true
@@ -499,6 +532,10 @@
           "named": true
         },
         {
+          "type": "boolean",
+          "named": true
+        },
+        {
           "type": "function_call",
           "named": true
         },
@@ -561,6 +598,10 @@
           },
           {
             "type": "block",
+            "named": true
+          },
+          {
+            "type": "boolean",
             "named": true
           },
           {
@@ -790,6 +831,10 @@
           },
           {
             "type": "block",
+            "named": true
+          },
+          {
+            "type": "boolean",
             "named": true
           },
           {
@@ -1150,6 +1195,10 @@
           "named": true
         },
         {
+          "type": "boolean",
+          "named": true
+        },
+        {
           "type": "function_call",
           "named": true
         },
@@ -1202,6 +1251,10 @@
         },
         {
           "type": "block",
+          "named": true
+        },
+        {
+          "type": "boolean",
           "named": true
         },
         {
@@ -1308,6 +1361,10 @@
     "named": false
   },
   {
+    "type": "false",
+    "named": false
+  },
+  {
     "type": "interface",
     "named": false
   },
@@ -1338,6 +1395,10 @@
   {
     "type": "string",
     "named": true
+  },
+  {
+    "type": "true",
+    "named": false
   },
   {
     "type": "type",

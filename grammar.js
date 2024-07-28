@@ -150,6 +150,7 @@ module.exports = grammar({
         choice(
           $.block,
           $.number,
+          $.boolean,
           $.match_expression,
           $.function_call,
           $.identifier,
@@ -213,6 +214,7 @@ module.exports = grammar({
     _pattern: ($) =>
       choice(
         $.number,
+        $.boolean,
         $.string,
         $.identifier,
         $.wildcard_pattern,
@@ -248,6 +250,8 @@ module.exports = grammar({
     not_implemented: ($) => token(seq("<", ">")),
 
     number: ($) => token(/\d+/),
+
+    boolean: ($) => choice(token("true"), token("false")),
 
     generic_identifier: ($) => /[A-Za-z][a-zA-Z0-9_]*/,
     type_identifier: ($) => /[A-Za-z][a-zA-Z0-9_]*/,

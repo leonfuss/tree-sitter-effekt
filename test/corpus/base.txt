@@ -99,6 +99,18 @@ type List[A] {
 ))
 
 ==================
+Not implemente Function
+==================
+def foo() = <>
+---
+(source_file
+    (function
+         (identifier)
+            (not_implemented)
+     )
+)
+
+==================
 Empty Function
 ==================
 
@@ -222,7 +234,7 @@ effect IO = { Read, Write }
 ---
 (source_file
       (effect_alias
-        (identifier)
+        (type_identifier)
          (parameter_type
           (type_identifier))
         (parameter_type
@@ -238,7 +250,7 @@ effect IO[A] = { Read, Write[A] }
 ---
  (source_file
       (effect_alias
-        (identifier)
+        (type_identifier)
         (type_parameters
           (generic_identifier))
         (parameter_type
@@ -256,7 +268,7 @@ effect DefaultIndent(): Int
 ---
 (source_file
       (effect
-        (identifier)
+        (type_identifier)
         (return_type
            (parameter_type
             (type_identifier)))))
@@ -271,7 +283,7 @@ effect FileNotFound[A](path: String, msg: A): Unit
 
  (source_file
       (effect
-        (identifier)
+        (type_identifier)
         (type_parameters
           (generic_identifier))
         (parameters
@@ -286,3 +298,50 @@ effect FileNotFound[A](path: String, msg: A): Unit
         (return_type
           (parameter_type
             (type_identifier)))))
+
+
+==================
+Simple Addition
+==================
+def add2(a: Int) = a + 2
+---
+ (source_file
+      (function
+        (identifier)
+        (parameters
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier))))
+        (binary_expression
+          (identifier)
+          (number))))
+==================
+Simple Multiplication
+==================
+def mult2(a: Int)   = a * 2
+
+---
+ (source_file
+      (function
+        (identifier)
+        (parameters
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier))))
+        (binary_expression
+          (identifier)
+          (number))))
+
+==================
+Boolean
+==================
+
+def isTrue() = true
+
+---
+(source_file
+   (function
+       (identifier)
+       (boolean)))
