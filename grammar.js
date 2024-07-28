@@ -109,7 +109,7 @@ module.exports = grammar({
     interface: ($) =>
       seq(
         "interface",
-        field("name", $.type_identifier),
+        $.parameter_type,
         "{",
         optional(field("members", $.interface_methods)),
         "}",

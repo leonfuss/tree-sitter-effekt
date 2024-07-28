@@ -578,12 +578,8 @@
           "value": "interface"
         },
         {
-          "type": "FIELD",
-          "name": "name",
-          "content": {
-            "type": "SYMBOL",
-            "name": "type_identifier"
-          }
+          "type": "SYMBOL",
+          "name": "parameter_type"
         },
         {
           "type": "STRING",

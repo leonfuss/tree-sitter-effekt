@@ -162,7 +162,8 @@ interface FileNotFound {
 
  (source_file
       (interface
-        (type_identifier)
+        (parameter_type
+        (type_identifier))
         (interface_methods
           (interface_method
             (identifier)
@@ -180,14 +181,17 @@ interface FileNotFound {
 Interface with Generics
 ==================
 
-interface Net {
+interface Net[A,L] {
   def send[A, L](value: A, receiver: Location[L]): Unit / { IO }
   def recv[A, L](receiver: Location[L]): A / { IO, SomeError }
 }
 ---
   (source_file
       (interface
-        (type_identifier)
+        (parameter_type
+           (type_identifier)
+             (generic_identifier)
+             (generic_identifier))
         (interface_methods
           (interface_method
             (identifier)
