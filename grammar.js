@@ -28,6 +28,7 @@ module.exports = grammar({
     ["function_call", "constructor"],
     ["function_call", "identifier"],
     ["constructor_call", "tuple"],
+    ["function_call", "pre_arg_function_call"],
   ],
 
   rules: {
@@ -320,7 +321,13 @@ module.exports = grammar({
     handler_function_parameters: ($) =>
       commaSep1(seq($.identifier, optional(seq(":", $.parameter_type)))),
 
-    call_chain: ($) => seq($.identifier, repeat1(seq(".", $.function_call))),
+    call_chain: ($) =>
+      seq(
+        $.identifier,
+        repeat1(seq(".", choice($.function_call, $.pre_arg_function_call))),
+      ),
+
+    pre_arg_function_call: ($) => prec("pre_arg_function_call", $.identifier),
 
     argument: ($) => $._expression,
 

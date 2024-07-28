@@ -452,6 +452,10 @@
         {
           "type": "identifier",
           "named": true
+        },
+        {
+          "type": "pre_arg_function_call",
+          "named": true
         }
       ]
     }
@@ -1367,6 +1371,21 @@
       "types": [
         {
           "type": "parameter",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "pre_arg_function_call",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
           "named": true
         }
       ]

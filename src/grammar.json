@@ -1910,13 +1910,30 @@
                 "value": "."
               },
               {
-                "type": "SYMBOL",
-                "name": "function_call"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "function_call"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "pre_arg_function_call"
+                  }
+                ]
               }
             ]
           }
         }
       ]
+    },
+    "pre_arg_function_call": {
+      "type": "PREC",
+      "value": "pre_arg_function_call",
+      "content": {
+        "type": "SYMBOL",
+        "name": "identifier"
+      }
     },
     "argument": {
       "type": "SYMBOL",
@@ -2111,6 +2128,16 @@
       {
         "type": "STRING",
         "value": "tuple"
+      }
+    ],
+    [
+      {
+        "type": "STRING",
+        "value": "function_call"
+      },
+      {
+        "type": "STRING",
+        "value": "pre_arg_function_call"
       }
     ]
   ],

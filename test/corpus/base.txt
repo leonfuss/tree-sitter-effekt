@@ -581,3 +581,29 @@ def foo() = {
                       (identifier)
                       (argument
                         (identifier)))))))))))
+
+==================
+Pre-arg function call
+==================
+
+def foo(x: Double) = {
+    x.ceil
+}
+
+---
+
+(source_file
+      (function
+        (identifier)
+        (parameters
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier))))
+        (block
+          (statement
+            (expression_statement
+              (call_chain
+                (identifier)
+                (pre_arg_function_call
+                  (identifier))))))))
