@@ -326,36 +326,38 @@ val y = <>
 ==================
 Simple Addition
 ==================
+
 def add2(a: Int) = a + 2
 ---
- (source_file
-      (function
-        (identifier)
-        (parameters
-          (parameter
-            (identifier)
-            (parameter_type
-              (type_identifier))))
-        (binary_expression
-          (identifier)
-          (number))))
+(source_file
+    (function_item
+        name: (identifier)
+        parameters: (parameters
+            (parameter
+                pattern: (identifier)
+                type: (primitive_type)))
+        body: (expression_statement
+            (binary_expression
+                left: (identifier)
+                right: (integer_literal)))))
+
 ==================
 Simple Multiplication
 ==================
 def mult2(a: Int)   = a * 2
 
 ---
- (source_file
-      (function
-        (identifier)
-        (parameters
-          (parameter
-            (identifier)
-            (parameter_type
-              (type_identifier))))
-        (binary_expression
-          (identifier)
-          (number))))
+(source_file
+    (function_item
+        name: (identifier)
+        parameters: (parameters
+            (parameter
+                pattern: (identifier)
+                type: (primitive_type)))
+        body: (expression_statement
+            (binary_expression
+                left: (identifier)
+                right: (integer_literal)))))
 
 ==================
 Boolean
@@ -365,9 +367,11 @@ def isTrue() = true
 
 ---
 (source_file
-   (function
-       (identifier)
-       (boolean)))
+   (function_item
+        name: (identifier)
+        parameters: (parameters)
+        body: (expression_statement
+            (boolean_literal))))
 
 
 ==================
@@ -379,17 +383,18 @@ def foo() = {
 }
 
 ---
- (source_file
-      (function
-        (identifier)
-        (block
-          (statement
-            (assignment
-              (identifier)
-              (function_call
-                (identifier)
-                (argument
-                  (number))))))))
+(source_file
+    (function_item
+        name: (identifier)
+        parameters: (parameters)
+        body: (expression_statement
+            (block
+                (val_declaration
+                    name: (identifier)
+                    value: (call_expression
+                        function: (identifier)
+                            arguments: (arguments
+                                (integer_literal))))))))
 
 
 ==================
@@ -401,15 +406,17 @@ def foo() = {
 }
 
 ---
-    (source_file
-      (function
-        (identifier)
-        (block
-          (statement
-            (assignment
-              (identifier)
-              (constructor
-                (type_identifier)))))))
+(source_file
+    (function_item
+        name: (identifier)
+        parameters: (parameters)
+        body: (expression_statement
+            (block
+                (val_declaration
+                    name: (identifier)
+                    value: (call_expression
+                        function: (identifier)
+                            arguments: (arguments)))))))
 
 ==================
 do SomeEffect
@@ -420,21 +427,20 @@ def foo(): Unit / {SomeEffect} = {
 }
 
 ---
-  (source_file
-      (function
-        (identifier)
-        (return_type
-          (parameter_type
-            (type_identifier))
-          (effects
-            (type_identifier)))
-        (block
-          (statement
-            (expression_statement
-              (unary_expression
-                (constructor
-                  (type_identifier))))))))
-
+(source_file
+    (function_item
+        name: (identifier)
+        parameters: (parameters)
+        return_type: (return_type
+            type: (primitive_type)
+            effects: (effects
+                (effect
+                    (type_identifier))))
+        body: (expression_statement
+            (block
+                (expression_statement
+                    (do_expression
+                        (Construction
 ==================
 Simple matching
 ==================
@@ -447,25 +453,27 @@ def foo(x: Int) = {
 
 ---
 
-(source_file
-      (function
-        (identifier)
-        (parameters
-          (parameter
-            (identifier)
-            (parameter_type
-              (type_identifier))))
-        (block
-          (statement
-            (expression_statement
-              (match_expression
-                (identifier)
-                (case_clause
-                  (number)
-                  (boolean))
-                (case_clause
-                  (number)
-                  (boolean))))))))
+ (source_file
+    (function_item
+        name: (identifier)
+        parameters: (parameters
+            (parameter
+                pattern: (identifier)
+                type: (primitive_type)))
+        body: (expression_statement
+            (block
+                (expression_statement
+                    (match_expression
+                        value: (identifier)
+                        body: (match_block
+                            (match_arm
+                                pattern: (match_pattern
+                                    (integer_literal))
+                                value: (boolean_literal))
+                            (match_arm
+                                pattern: (match_pattern
+                                    (integer_literal))
+                                value: (boolean_literal)))))))))
 
 ==================
 Tuple matching
@@ -478,34 +486,35 @@ def foo(x: Int, y: Int) = {
 }
 ---
 (source_file
-      (function
-        (identifier)
-        (parameters
-          (parameter
-            (identifier)
-            (parameter_type
-              (type_identifier)))
-          (parameter
-            (identifier)
-            (parameter_type
-              (type_identifier))))
-        (block
-          (statement
-            (expression_statement
-              (match_expression
-                (tuple_expression
-                  (identifier)
-                  (identifier))
-                (case_clause
-                  (tuple_pattern
-                    (number)
-                    (number))
-                  (boolean))
-                (case_clause
-                  (tuple_pattern
-                    (number)
-                    (number))
-                  (boolean))))))))
+    (function_item
+        name: (identifier)
+        parameters: (parameters
+            (parameter
+                pattern: (identifier)
+                type: (primitive_type))
+            (parameter
+                pattern: (identifier)
+                type: (primitive_type)))
+        body: (expression_statement
+            (block
+                (expression_statement
+                    (match_expression
+                        value: (tuple_expression
+                            (identifier)
+                            (identifier))
+                        body: (match_block
+                            (match_arm
+                                pattern: (match_pattern
+                                    (tuple_pattern
+                                        (integer_literal)
+                                        (integer_literal)))
+                                value: (boolean_literal))
+                            (match_arm
+                                pattern: (match_pattern
+                                (tuple_pattern
+                                    (integer_literal)
+                                    (integer_literal)))
+                                value: (boolean_literal)))))))))
 
 ==================
 Tuple function argument
@@ -516,17 +525,16 @@ def foo(x: (Int, Int)) = <>
 ---
 
 (source_file
-      (function
-        (identifier)
-        (parameters
-          (parameter
-            (identifier)
-            (tuple_parameter_type
-              (parameter_type
-                (type_identifier))
-              (parameter_type
-                (type_identifier)))))
-        (not_implemented)))
+    (function_item
+        name: (identifier)
+        parameters: (parameters
+            (parameter
+                pattern: (identifier)
+                type: (tuple_type
+                    (primitive_type)
+                    (primitive_type))))
+        body: (expression_statement
+            (hole))))
 
 ==================
 try with handler function and resume
@@ -541,28 +549,30 @@ def foo() = {
 }
 
 ---
- (source_file
-      (function
-        (identifier)
-        (block
-          (statement
-            (expression_statement
-              (try_expression
-                (block
-                  (statement
-                    (expression_statement
-                      (function_call
-                        (identifier)))))
-                (with_handler
-                  (parameter_type
-                    (type_identifier))
-                  (handler_function
-                    (identifier)
-                    (handler_function_parameters
-                      (identifier)
-                      (identifier))
-                       (resume
-                      (identifier))))))))))
+(source_file
+    (function_item
+        name: (identifier)
+        parameters: (parameters)
+        body: (expression_statement
+            (block
+                (expression_statement
+                    (try_expression
+                        block: (block
+                            (expression_statement
+                                (call_expression
+                                    function: (identifier)
+                                        arguments: (arguments))))
+                        with_clause: (with_clause
+                            name: (type_identifier)
+                            block: (function_list
+                                (function_item
+                                    name: (identifier)
+                                    parameters: (parameters
+                                        (identifier)
+                                        (identifier))
+                                    body: (expression_statement
+                                        (resume_expression
+                                            value: (identifier))))))))))))
 ==================
 try with annonymous handler function
 ==================
@@ -577,31 +587,29 @@ def foo() = {
 ---
 
 (source_file
-      (function
-        (identifier)
-        (block
-          (statement
-            (expression_statement
-              (try_expression
-                (block
-                  (statement
-                    (expression_statement
-                      (function_call
-                        (identifier)
-                        (argument
-                          (number))
-                        (argument
-                          (number))))))
-                (with_handler
-                  (parameter_type
-                    (type_identifier))
-                  (anonymous_function
-                    (handler_function_parameters
-                      (identifier))
-                    (function_call
-                      (identifier)
-                      (argument
-                        (identifier)))))))))))
+    (function_item
+        name: (identifier)
+        parameters: (parameters)
+        body: (expression_statement
+            (block
+                (expression_statement
+                    (try_expression
+                        block: (block
+                            (expression_statement
+                                (call_expression
+                                    function: (identifier)
+                                        arguments: (arguments
+                                            (float_literal)
+                                            (float_literal)))))
+                        with_clause: (with_clause
+                            name: (type_identifier)
+                            block: (block_argument
+                                (parameters
+                                    (identifier))
+                                (call_expression
+                                    function: (identifier)
+                                        arguments: (arguments
+                                            (identifier)))))))))))
 
 ==================
 Pre-arg function call
@@ -614,20 +622,18 @@ def foo(x: Double) = {
 ---
 
 (source_file
-      (function
-        (identifier)
-        (parameters
-          (parameter
-            (identifier)
-            (parameter_type
-              (type_identifier))))
-        (block
-          (statement
-            (expression_statement
-              (call_chain
-                (identifier)
-                (pre_arg_function_call
-                  (identifier))))))))
+    (function_item
+        name: (identifier)
+        parameters: (parameters
+            (parameter
+                pattern: (identifier)
+                type: (primitive_type)))
+        body: (expression_statement
+            (block
+                (expression_statement
+                    (field_expression
+                        value: (identifier)
+                        field: (field_identifier)))))))
 
 ==================
 line comment
@@ -650,13 +656,15 @@ def foo() = <>
 
 /* */
 ---
-  (source_file
-      (comment)
-      (comment)
-      (function
-        (identifier)
-        (not_implemented))
-      (comment))
+(source_file
+    (comment)
+    (comment)
+    (function_item
+        name: (identifier)
+        parameters: (parameters)
+        body: (expression_statement
+            (hole)))
+    (comment))
 
 
 ==================
@@ -668,20 +676,21 @@ def foo() = {
     }
 }
 ---
- (source_file
-      (function
-        (identifier)
-        (block
-          (statement
-            (while_expression
-              (boolean)
-              (block
-                (statement
-                  (expression_statement
-                    (function_call
-                      (identifier)
-                      (argument
-                        (string)))))))))))
+(source_file
+    (function_item
+        name: (identifier)
+        parameters: (parameters)
+        body: (expression_statement
+            (block
+                (expression_statement
+                (while_expression
+                    condition: (boolean_literal)
+                    block: (block
+                        (expression_statement
+                            (call_expression
+                                function: (identifier)
+                                arguments: (arguments
+                                    (string_literal)))))))))))
 
 ==================
 If expression
@@ -697,67 +706,67 @@ def foo() = {
 }
 ---
 
- (source_file
-      (function
-        (identifier)
-        (block
-          (statement
-            (expression_statement
-              (if_expression
-                (boolean)
-                (block
-                  (statement
-                    (expression_statement
-                      (function_call
-                        (identifier)
-                        (argument
-                          (string))))))
-                (if_else_expression
-                  (boolean)
-                  (block
-                    (statement
-                      (function
-                        (identifier)
-                        (function_call
-                          (identifier)
-                          (argument
-                            (string))))))
-                  (else_expression
-                    (block
-                      (statement
-                        (expression_statement
-                          (function_call
-                            (identifier)
-                            (argument
-                              (string))))))))))))))
+(source_file
+    (function_item
+        name: (identifier)
+        parameters: (parameters)
+        body: (expression_statement
+            (block
+                (expression_statement
+                    (if_expression
+                        condition: (boolean_literal)
+                        block: (block
+                            (expression_statement
+                                (call_expression
+                                    function: (identifier)
+                                    arguments: (arguments
+                                        (string_literal)))))
+                        if_else_clause: (if_else_clause
+                            condition: (boolean_literal)
+                            block: (block
+                                (function_item
+                                    name: (identifier)
+                                    parameters: (parameters)
+                                    body: (expression_statement
+                                        (call_expression
+                                        function: (identifier)
+                                        arguments: (arguments
+                                            (string_literal)))))))
+                        else_clause: (else_clause
+                            block: (block
+                                (expression_statement
+                                    (call_expression
+                                        function: (identifier)
+                                        arguments: (arguments
+                                            (string_literal))))))))))))
 
 ==================
 If and binary expression
 ==================
 
 def pop() : Int = {
-  if (something) {} else {};
+  if (something) {} else {}
 
-  42333 + 1
+  42333 + 1 * 2
 }
 ---
- (source_file
-      (function
-        (identifier)
-        (return_type
-          (parameter_type
-            (type_identifier)))
-        (block
-          (statement
-            (expression_statement
-              (if_expression
-                (identifier)
-                (block)
-                (else_expression
-                  (block)))))
-          (statement
-            (expression_statement
-              (binary_expression
-                (number)
-                (binary_expression
-                  (number)
+(source_file
+    (function_item
+        name: (identifier)
+        parameters: (parameters)
+        return_type: (return_type
+            type: (primitive_type))
+        body: (expression_statement
+            (block
+                (expression_statement
+                    (if_expression
+                        condition: (identifier)
+                        block: (block)
+                        else_clause: (else_clause
+                        block: (block))))
+                (expression_statement
+                    (binary_expression
+                        left: (integer_literal)
+                        right: (binary_expression
+                            left: (integer_literal)
+                            right: (integer_literal))))))))

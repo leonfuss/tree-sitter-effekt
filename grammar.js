@@ -1,4 +1,5 @@
 const PREC = {
+  constructor: 10,
   call: 9,
   field: 8,
   try: 7,
@@ -37,17 +38,7 @@ module.exports = grammar({
   word: ($) => $.identifier,
 
   // local precedence rules
-  // TODO: Rewrite for removal
-  precedences: ($) => [
-    ["match", "assignment"],
-    ["multiplication", "addition"],
-    ["statement", "expression"],
-    ["function_call", "expression"],
-    ["function_call", "constructor"],
-    ["function_call", "identifier"],
-    ["constructor_call", "tuple"],
-    ["function_call", "pre_arg_function_call"],
-  ],
+  precedences: ($) => [],
 
   // supertypes that include a lot of other tokens
   supertypes: ($) => [
@@ -91,19 +82,11 @@ module.exports = grammar({
         $.function_item,
         $.import_declaration,
         $.val_declaration,
+        $.var_declaration,
       ),
 
     expression_statement: ($) =>
       choice($._expression, prec(1, $._expression_ending_with_block)),
-
-    _expression_ending_with_block: ($) =>
-      choice(
-        $.block,
-        //$.if_expression,
-        //$.match_expression,
-        //$.try_expression,
-        //$.while_expression,
-      ),
 
     // === section - declarations ===
 
@@ -191,7 +174,7 @@ module.exports = grammar({
       ),
 
     parameters: ($) =>
-      seq("(", sepBy(",", choice($.parameter, $._type)), optional(","), ")"),
+      seq("(", sepBy(",", choice($.parameter, $._pattern)), optional(","), ")"),
 
     parameter: ($) =>
       seq(field("pattern", $._pattern), ":", field("type", $._type)),
@@ -224,6 +207,14 @@ module.exports = grammar({
     val_declaration: ($) =>
       seq(
         "val",
+        field("name", $.identifier),
+        "=",
+        field("value", $._expression),
+      ),
+
+    var_declaration: ($) =>
+      seq(
+        "var",
         field("name", $.identifier),
         "=",
         field("value", $._expression),
@@ -267,6 +258,7 @@ module.exports = grammar({
         $.hole,
         $.unit_expression,
         $.unary_expression,
+        $.constructor_expression,
         $.binary_expression,
         $.assignment_expression,
         $.call_expression,
@@ -326,17 +318,31 @@ module.exports = grammar({
               "arguments",
               choice(
                 seq($.arguments, repeat($.block_argument)),
-                repeat($.block_argument),
+                repeat1($.block_argument),
               ),
             ),
           ),
         ),
       ),
 
+    constructor_expression: ($) =>
+      prec(
+        PREC.constructor,
+        seq(
+          field(
+            "constructor",
+            alias($._constructor_identifier, $._type_identifier),
+          ),
+          field("type_parameters", optional($.type_parameters)),
+          field("arguments", $.arguments),
+        ),
+      ),
+
     arguments: ($) =>
       choice(seq("(", sepBy(",", $._expression), optional(","), ")")),
 
-    block_argument: ($) => seq("{", sepBy(",", $._expression), "}"),
+    block_argument: ($) =>
+      seq("{", $.parameters, "=>", sepBy(",", $._expression), "}"),
 
     do_expression: ($) => prec.left(seq("do", $._expression)),
 
@@ -365,10 +371,96 @@ module.exports = grammar({
         ),
       ),
 
+    // === section - block ===
+
+    _expression_ending_with_block: ($) =>
+      choice(
+        $.block,
+        $.if_expression,
+        $.while_expression,
+        $.try_expression,
+        $.match_expression,
+      ),
+
     block: ($) => seq("{", repeat(seq($._statement, optional(";"))), "}"),
 
+    if_expression: ($) =>
+      prec.right(
+        seq(
+          "if",
+          field("condition", $._condition),
+          field("block", $.block),
+          repeat(field("if_else_clause", $.if_else_clause)),
+          optional(field("else_clause", $.else_clause)),
+        ),
+      ),
+
+    _condition: ($) => seq("(", $._expression, ")"),
+
+    if_else_clause: ($) =>
+      seq(
+        "if",
+        "else",
+        field("condition", $._condition),
+        field("block", $.block),
+      ),
+
+    else_clause: ($) => seq("else", field("block", $.block)),
+
+    while_expression: ($) =>
+      seq("while", field("condition", $._condition), field("block", $.block)),
+
+    try_expression: ($) =>
+      seq(
+        "try",
+        field("block", $.block),
+        field("with_clause", repeat($.with_clause)),
+      ),
+
+    with_clause: ($) =>
+      seq(
+        "with",
+        field("name", $._type_identifier),
+        field("type_parameter", optional($.type_parameters)),
+        field("block", choice($.function_list, $.block_argument)),
+      ),
+
+    function_list: ($) => seq("{", repeat($.function_item), "}"),
+
+    match_expression: ($) =>
+      seq(field("value", $._expression), "match", field("body", $.match_block)),
+
+    match_block: ($) => seq("{", repeat($.match_arm), "}"),
+
+    match_arm: ($) =>
+      seq(
+        "case",
+        field("pattern", $.match_pattern),
+        "=>",
+        field("value", $._expression),
+        optional(","),
+      ),
+
+    match_pattern: ($) =>
+      seq($._pattern, optional(seq("if", field("condition", $._condition)))),
+
     // === section - patterns ===
-    _pattern: ($) => choice($.identifier),
+
+    _pattern: ($) =>
+      choice($._literal_pattern, $.identifier, $.tuple_pattern, $.list_pattern),
+
+    tuple_pattern: ($) => seq("(", sepBy(",", $._pattern), optional(","), ")"),
+
+    list_pattern: ($) => seq("[", sepBy(",", $._pattern), optional(","), "]"),
+
+    _literal_pattern: ($) =>
+      choice(
+        $.string_literal,
+        $.integer_literal,
+        $.float_literal,
+        $.boolean_literal,
+        $.negative_literal,
+      ),
 
     // === section - literals ===
 
@@ -380,11 +472,16 @@ module.exports = grammar({
         $.boolean_literal,
       ),
 
+    negative_literal: ($) =>
+      seq("-", choice($.integer_literal, $.float_literal)),
+
     float_literal: ($) =>
-      prec.left(
-        seq(
-          choice(/[0-9][0-9_]*/, optional(seq(".", /[0-9][0-9_]*/))),
-          seq(".", /[0-9][0-9_]*/),
+      token(
+        prec.left(
+          seq(
+            choice(/[0-9][0-9_]*/, optional(seq(".", /[0-9][0-9_]*/))),
+            seq(".", /[0-9][0-9_]*/),
+          ),
         ),
       ),
 
@@ -395,397 +492,18 @@ module.exports = grammar({
         seq(choice(/[0-9][0-9_]*/, /0x[0-9a-fA-F_]+/, /0b[01_]+/, /0o[0-7_]+/)),
       ),
 
-    // https://github.com/tree-sitter/tree-sitter-rust/blob/master/grammar.js#L1480
-    string_literal: ($) =>
-      seq(
-        token.immediate('"'),
-        repeat(choice($.escape_sequence, $.string_content)),
-        token.immediate('"'),
-      ),
-
-    string_content: (_) => /.*/,
-
-    escape_sequence: (_) =>
-      token.immediate(
-        seq(
-          "\\",
-          choice(
-            /[^xu]/,
-            /u[0-9a-fA-F]{4}/,
-            /u\{[0-9a-fA-F]+\}/,
-            /x[0-9a-fA-F]{2}/,
-          ),
-        ),
-      ),
+    string_literal: ($) => /"([^"\\]|\\.)*"/,
 
     boolean_literal: (_) => choice("true", "false"),
 
-    // ======================== old ========================
+    identifier: ($) => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
 
-    // _definition: ($) =>
-    //   choice(
-    //     $.comment,
-    //     $.record_item,
-    //     $.type_item,
-    //     $.function_item,
-    //     $.interface_item,
-    //     $.effect_item,
-    //     $.effect_alias_item,
-    //   ),
-
-    // // @deprecated
-    // _type_parameters: ($) => seq("[", commaSep1($.generic_identifier), "]"),
-
-    // parameters: ($) => commaSep1($.parameter),
-
-    // parameter: ($) =>
-    //   seq(
-    //     field("name", $.identifier),
-    //     ":",
-    //     field("kind", choice($.parameter_type, $.tuple_parameter_type)),
-    //   ),
-
-    // parameter_type: ($) => seq($.type_identifier, optional($._type_parameters)),
-
-    // tuple_parameter_type: ($) => seq("(", commaSep1($.parameter_type), ")"),
-
-    // type_item: ($) =>
-    //   seq("type", $.parameter_type, choice($._simple_type, $._complex_type)),
-
-    // _simple_type: ($) => seq("=", $.parameter_type),
-    // _complex_type: ($) =>
-    //   seq("{", optional(field("members", $.type_item_members)), "}"),
-
-    // type_item_members: ($) => semilicolonSep1($.type_item_member),
-
-    // type_item_member: ($) =>
-    //   seq(field("member", $.type_identifier), "(", optional($.parameters), ")"),
-
-    // // TODO: rewrite block parameters
-    // function_item: ($) =>
-    //   seq(
-    //     "def",
-    //     field("name", $.identifier),
-    //     optional(field("_type_parameters", $._type_parameters)),
-    //     "(",
-    //     optional(field("parameters", $.parameters)),
-    //     ")",
-    //     optional(field("block_parameters", $.block_parameters)),
-    //     optional(seq(":", field("return_type", $.return_type))),
-    //     "=",
-    //     field("body", $._expression),
-    //   ),
-
-    // // todo rewrite block parameters to allow for higher order functions
-    // block_parameters: ($) => seq("{", $.parameters, "}"),
-
-    // return_type: ($) =>
-    //   seq($.parameter_type, optional(field("effects", $.effects))),
-
-    // effects: ($) => seq("/", "{", commaSep1($.type_identifier), "}"),
-
-    // interface_item: ($) =>
-    //   seq(
-    //     "interface",
-    //     $.parameter_type,
-    //     "{",
-    //     optional(field("members", $.interface_methods)),
-    //     "}",
-    //   ),
-
-    // interface_methods: ($) => repeat1($.interface_method),
-
-    // interface_method: ($) =>
-    //   seq(
-    //     "def",
-    //     field("name", $.identifier),
-    //     optional(field("_type_parameters", $._type_parameters)),
-    //     "(",
-    //     optional(field("parameters", $.parameters)),
-    //     ")",
-    //     optional(field("block_parameters", $.block_parameters)),
-    //     optional(seq(":", field("return_type", $.return_type))),
-    //   ),
-
-    // effect_item: ($) =>
-    //   seq(
-    //     "effect",
-    //     $.parameter_type,
-    //     optional(seq("(", optional(field("parameters", $.parameters)), ")")),
-    //     optional(seq(":", field("return_type", $.return_type))),
-    //   ),
-
-    // effect_alias_item: ($) =>
-    //   seq(
-    //     "effect",
-    //     $.parameter_type,
-    //     "=",
-    //     "{",
-    //     field("effects", commaSep($.parameter_type)),
-    //     "}",
-    //   ),
-
-    // _expression: ($) =>
-    //   prec(
-    //     "expression",
-    //     choice(
-    //       $.block,
-    //       $.number,
-    //       $.boolean,
-    //       $.tuple_expression,
-    //       $.match_expression,
-    //       $.try_expression,
-    //       $.if_expression,
-    //       $.function_call,
-    //       $.constructor,
-    //       $._identifier,
-    //       $.string,
-    //       $.array,
-    //       $.assignment,
-    //       $.binary_expression,
-    //       $.unary_expression,
-    //       $.not_implemented,
-    //       $.resume,
-    //       $.call_chain,
-    //     ),
-    //   ),
-
-    // _identifier: ($) => prec("identifier", $.identifier),
-
-    // binary_expression: ($) =>
-    //   choice(
-    //     prec.left(1, seq($._expression, "and", $._expression)),
-    //     prec.left(2, seq($._expression, "is", $._expression)),
-    //     prec.left("addition", seq($._expression, "+", $._expression)),
-    //     prec.left("addition", seq($._expression, "-", $._expression)),
-    //     prec.left("multiplication", seq($._expression, "*", $._expression)),
-    //     prec.left("multiplication", seq($._expression, "/", $._expression)),
-    //   ),
-
-    // unary_expression: ($) => prec.right(seq("do", $._expression)),
-
-    // statement: ($) =>
-    //   prec(
-    //     "statement",
-    //     choice(
-    //       $.assignment,
-    //       $.while_expression,
-    //       $.expression_statement,
-    //       $.function_item,
-    //     ),
-    //   ),
-
-    // resume: ($) => seq("resume", "(", $._expression, ")"),
-
-    // assignment: ($) =>
-    //   prec.left(
-    //     "assignment",
-    //     seq(
-    //       choice("val", "var"),
-    //       choice($.identifier, $.tuple_identifier),
-    //       "=",
-    //       $._expression,
-    //     ),
-    //   ),
-
-    // tuple_identifier: ($) => seq("(", commaSep1($.identifier), ")"),
-
-    // while_expression: ($) => seq("while", "(", $._expression, ")", $.block),
-
-    // if_expression: ($) =>
-    //   seq(
-    //     "if",
-    //     "(",
-    //     $._expression,
-    //     ")",
-    //     $.block,
-    //     optional(choice($.if_else_expression, $.else_expression)),
-    //   ),
-
-    // if_else_expression: ($) =>
-    //   seq(
-    //     "if",
-    //     "else",
-    //     "(",
-    //     $._expression,
-    //     ")",
-    //     $.block,
-    //     optional(choice($.if_else_expression, $.else_expression)),
-    //   ),
-
-    // else_expression: ($) => seq("else", $.block),
-
-    // match_expression: ($) =>
-    //   prec.left(
-    //     "match",
-    //     seq(
-    //       field("value", $._expression),
-    //       "match",
-    //       "{",
-    //       repeat1($.case_clause),
-    //       "}",
-    //     ),
-    //   ),
-
-    // case_clause: ($) =>
-    //   seq(
-    //     "case",
-    //     field("pattern", $._pattern),
-    //     "=>",
-    //     field("body", $._expression),
-    //   ),
-
-    // _pattern: ($) =>
-    //   choice(
-    //     $.number,
-    //     $.boolean,
-    //     $.string,
-    //     $.identifier,
-    //     $.wildcard_pattern,
-    //     $.tuple_pattern,
-    //     $.constructor_pattern,
-    //   ),
-
-    // wildcard_pattern: ($) => "_",
-
-    // tuple_pattern: ($) => seq("(", commaSep1($._pattern), ")"),
-
-    // constructor_pattern: ($) =>
-    //   seq(
-    //     field("constructor", $.type_identifier),
-    //     "(",
-    //     optional(commaSep1($._pattern)),
-    //     ")",
-    //   ),
-
-    // block: ($) => seq("{", optSemicolonNewlineSep($.statement), "}"),
-
-    // tuple_expression: ($) =>
-    //   prec("tuple", seq("(", commaSep1($._expression), ")")),
-
-    // constructor: ($) =>
-    //   prec(
-    //     "constructor",
-    //     seq(
-    //       field("name", $.type_identifier),
-    //       "(",
-    //       optional(commaSep($.argument)),
-    //       ")",
-    //     ),
-    //   ),
-
-    // function_call: ($) =>
-    //   prec.left(
-    //     "function_call",
-    //     seq(
-    //       field("function", $.identifier),
-    //       choice(
-    //         seq("(", optional(commaSep($.argument)), ")"),
-    //         repeat1($.block),
-    //       ),
-    //     ),
-    //   ),
-
-    // try_expression: ($) => seq("try", $.block, repeat1($.with_handler)),
-
-    // with_handler: ($) =>
-    //   seq(
-    //     "with",
-    //     $.parameter_type,
-    //     "{",
-    //     choice($.anonymous_function, repeat1($.handler_function)),
-    //     "}",
-    //   ),
-
-    // handler_function: ($) =>
-    //   seq(
-    //     "def",
-    //     $.identifier,
-    //     optional(field("_type_parameters", $._type_parameters)),
-    //     "(",
-    //     optional(field("parameters", $.handler_function_parameters)),
-    //     ")",
-    //     "=",
-    //     $._expression,
-    //   ),
-
-    // anonymous_function: ($) =>
-    //   seq(
-    //     "(",
-    //     optional($.handler_function_parameters),
-    //     ")",
-    //     "=>",
-    //     $._expression,
-    //   ),
-
-    // handler_function_parameters: ($) =>
-    //   commaSep1(seq($.identifier, optional(seq(":", $.parameter_type)))),
-
-    // call_chain: ($) =>
-    //   seq(
-    //     $.identifier,
-    //     repeat1(seq(".", choice($.function_call, $.pre_arg_function_call))),
-    //   ),
-
-    // pre_arg_function_call: ($) => prec("pre_arg_function_call", $.identifier),
-
-    // argument: ($) => $._expression,
-
-    // string: ($) => /"([^"\\]|\\.)*"/,
-
-    // array: ($) => seq("[", optional(commaSep($._expression)), "]"),
-
-    // not_implemented: ($) => token(seq("<", ">")),
-
-    // number: ($) => token(/[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?/),
-
-    // boolean: ($) => choice(token("true"), token("false")),
-
-    // generic_identifier: ($) => /[A-Za-z][a-zA-Z0-9_]*/,
-    // type_identifier: ($) => /[A-Z][a-zA-Z0-9_]*/,
-
-    identifier: ($) => /(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*/,
+    _constructor_identifier: ($) => /[A-Z][_\p{XID_Continue}]*/,
 
     _type_identifier: ($) => alias($.identifier, $.type_identifier),
     _field_identifier: ($) => alias($.identifier, $.field_identifier),
   },
 });
-
-function commaSep(rule) {
-  return optional(commaSep1(rule));
-}
-
-function commaSep1(rule) {
-  return sep1(",", rule);
-}
-
-function trailingCommaSep(rule) {
-  return optional(trailingCommaSep1(rule));
-}
-
-function trailingCommaSep1(rule) {
-  return trailingSep1(",", rule);
-}
-
-function semilicolonSep1(rule) {
-  return sep1(";", rule);
-}
-
-function optSemicolonNewlineSep(rule) {
-  return optional(semilicolonSep1(rule));
-}
-
-function semicolonNewlineSep(rule) {
-  return sep1(choice(";", /(\n)/), rule);
-}
-
-function trailingSep1(delimiter, rule) {
-  return seq(sep1(delimiter, rule), optional(delimiter));
-}
-
-function sep1(delimiter, rule) {
-  return seq(rule, repeat(seq(delimiter, rule)));
-}
 
 /**
  * Creates a rule to match one or more of the rules separated by the separator.
