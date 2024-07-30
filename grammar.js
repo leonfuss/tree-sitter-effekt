@@ -164,6 +164,7 @@ module.exports = grammar({
           $.tuple_expression,
           $.match_expression,
           $.try_expression,
+          $.if_expression,
           $.function_call,
           $.constructor,
           $._identifier,
@@ -220,7 +221,30 @@ module.exports = grammar({
 
     tuple_identifier: ($) => seq("(", commaSep1($.identifier), ")"),
 
-    while_expression: ($) => seq("while", $._expression, $.block),
+    while_expression: ($) => seq("while", "(", $._expression, ")", $.block),
+
+    if_expression: ($) =>
+      seq(
+        "if",
+        "(",
+        $._expression,
+        ")",
+        $.block,
+        optional(choice($.if_else_expression, $.else_expression)),
+      ),
+
+    if_else_expression: ($) =>
+      seq(
+        "if",
+        "else",
+        "(",
+        $._expression,
+        ")",
+        $.block,
+        optional(choice($.if_else_expression, $.else_expression)),
+      ),
+
+    else_expression: ($) => seq("else", $.block),
 
     match_expression: ($) =>
       prec.left(

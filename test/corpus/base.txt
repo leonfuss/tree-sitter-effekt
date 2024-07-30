@@ -640,3 +640,76 @@ def foo() = <>
         (identifier)
         (not_implemented))
       (comment))
+
+
+==================
+While loop
+==================
+def foo() = {
+    while (true) {
+        println("Hello")
+    }
+}
+---
+ (source_file
+      (function
+        (identifier)
+        (block
+          (statement
+            (while_expression
+              (boolean)
+              (block
+                (statement
+                  (expression_statement
+                    (function_call
+                      (identifier)
+                      (argument
+                        (string)))))))))))
+
+==================
+If expression
+==================
+def foo() = {
+    if (true) {
+        println("Hello")
+    } if else (false) {
+        def bar() = println("Goodbye")
+    } else {
+        println("Goodbye")
+    }
+}
+---
+
+ (source_file
+      (function
+        (identifier)
+        (block
+          (statement
+            (expression_statement
+              (if_expression
+                (boolean)
+                (block
+                  (statement
+                    (expression_statement
+                      (function_call
+                        (identifier)
+                        (argument
+                          (string))))))
+                (if_else_expression
+                  (boolean)
+                  (block
+                    (statement
+                      (function
+                        (identifier)
+                        (function_call
+                          (identifier)
+                          (argument
+                            (string))))))
+                  (else_expression
+                    (block
+                      (statement
+                        (expression_statement
+                          (function_call
+                            (identifier)
+                            (argument
+                              (string))))))))))))))
