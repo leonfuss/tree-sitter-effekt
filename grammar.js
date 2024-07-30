@@ -54,7 +54,7 @@ module.exports = grammar({
 
   // conflicts to be resolved at runtime using multiple stacks.
   // The first rule is prefered over the second one
-  conflicts: ($) => [],
+  conflicts: ($) => [[$.function_item]],
 
   // external scanners to be used
   externals: ($) => [],
@@ -80,18 +80,15 @@ module.exports = grammar({
     _declaration_statement: ($) =>
       choice(
         $.record_item,
-        //$.type_item,
-        //$.interface_item,
-        //$.effect_item,
-        //$.function_item,
-        //$.import_declaration,
+        $.type_item,
+        $.interface_item,
+        $.effect_item,
+        $.function_item,
+        $.import_declaration,
       ),
 
     expression_statement: ($) =>
-      choice(
-        // $._expression,
-        prec(1, $._expression_ending_with_block),
-      ),
+      choice($._expression, prec(1, $._expression_ending_with_block)),
 
     _expression_ending_with_block: ($) =>
       choice(
@@ -102,7 +99,7 @@ module.exports = grammar({
         //$.while_expression,
       ),
 
-    // section - declarations
+    // === section - declarations ===
 
     record_item: ($) =>
       seq(
@@ -121,7 +118,109 @@ module.exports = grammar({
     field_declaration: ($) =>
       seq(field("name", $._field_identifier), ":", field("type", $._type)),
 
-    // section - type
+    type_item: ($) =>
+      seq(
+        "type",
+        field("name", $._type_identifier),
+        field("type_parameters", optional($.type_parameters)),
+        choice(
+          field("assignment", $.type_assignment),
+          field("body", $.type_variant_list),
+        ),
+      ),
+
+    type_assignment: ($) => seq("=", $._type),
+
+    type_variant_list: ($) =>
+      seq("{", sepBy(";", $.type_variant), optional(";"), "}"),
+
+    type_variant: ($) =>
+      seq(
+        field("name", $._type_identifier),
+        field("type_parameters", optional($.type_parameters)),
+        field("body", $.field_item_list),
+      ),
+
+    interface_item: ($) =>
+      seq(
+        "interface",
+        field("name", $._type_identifier),
+        field("type_parameters", optional($.type_parameters)),
+        field("body", $.declaration_list),
+      ),
+
+    declaration_list: ($) => seq("{", repeat($._declaration_statement), "}"),
+
+    effect_item: ($) =>
+      seq(
+        "effect",
+        field("name", $._type_identifier),
+        field("type_parameters", optional($.type_parameters)),
+        choice(
+          seq(
+            field("parameters", $.parameters),
+            field("return_type", $.return_type),
+          ),
+          seq("=", field("alias", $.effect_alias_list)),
+        ),
+      ),
+
+    effect_alias_list: ($) =>
+      seq("{", sepBy(",", alias($._type, $.effect_alias)), "}"),
+
+    function_item: ($) =>
+      seq(
+        "def",
+        field("name", $.identifier),
+        field("type_parameters", optional($.type_parameters)),
+        choice(
+          seq(
+            field("parameters", $.parameters),
+            field("block_parameter", repeat($.block_parameter)),
+          ),
+          field("block_parameter", repeat1($.block_parameter)),
+        ),
+        optional(field("return_type", $.return_type)),
+        optional(seq("=", field("body", $.expression_statement))),
+      ),
+
+    parameters: ($) =>
+      seq("(", sepBy(",", choice($.parameter, $._type)), optional(","), ")"),
+
+    parameter: ($) =>
+      seq(field("pattern", $._pattern), ":", field("type", $._type)),
+
+    block_parameter: ($) =>
+      seq(
+        "{",
+        field("name", $.identifier),
+        ":",
+        field("type", $._type),
+        "=>",
+        field("return_type", $.return_type),
+        "}",
+      ),
+
+    return_type: ($) =>
+      seq(":", field("type", $._type), field("effects", optional($.effects))),
+
+    effects: ($) =>
+      seq("/", choice(seq("{", sepBy(",", $.effect), "}"), $.effect)),
+
+    effect: ($) =>
+      seq(
+        $._type_identifier,
+        field("type_parameters", optional($.type_parameters)),
+      ),
+
+    import_declaration: ($) => seq("import", field("path", $.path)),
+
+    path: ($) => sepBy1("/", $.path_segment),
+
+    path_segment: ($) => /[a-zA-Z0-9_]+/,
+
+    // === section - type ===
+
     _type: ($) =>
       choice(
         //    $.function_type,
@@ -145,9 +244,16 @@ module.exports = grammar({
         ),
       ),
 
-    // section - expressions
+    // === section - expressions ===
+
+    _expression: ($) => choice($.hole),
+
+    hole: ($) => "<>",
 
     block: ($) => seq("{", repeat($._statement), "}"),
+
+    // === section - patterns ===
+    _pattern: ($) => choice($.identifier),
 
     // ======================== old ========================
 

@@ -36,3 +36,717 @@ record Position [A, B](line: List[A], col: Int, index: Int)
         (field_declaration
             name: (field_identifier)
             type: (primitive_type)))))
+
+==================
+Simple Type
+==================
+
+type Locations = List[SomeLocation]
+
+---
+(source_file
+    (type_item
+        name: (type_identifier)
+        assignment: (type_assignment
+            (generic_type
+                (type_identifier)
+                 type_arguments: (type_arguments
+                    (type_identifier))))))
+==================
+Type
+==================
+type List {}
+
+
+---
+(source_file
+  (type_item
+    name: (type_identifier)
+    body: (type_variant_list)))
+
+==================
+Type with Generics
+==================
+
+type List[A] {
+  Nil();
+  Cons(head: A, tail: List[A])
+}
+
+---
+
+(source_file
+    (type_item
+        name: (type_identifier)
+        type_parameters: (type_parameters
+            (type_identifier))
+        body: (type_variant_list
+            (type_variant
+                name: (type_identifier)
+                body: (field_item_list))
+            (type_variant
+                name: (type_identifier)
+                body: (field_item_list
+                    (field_declaration
+                        name: (field_identifier)
+                        type: (type_identifier))
+                    (field_declaration
+                        name: (field_identifier)
+                        type: (generic_type
+                            (type_identifier)
+                                type_arguments: (type_arguments
+                                    (type_identifier)))))))))
+
+==================
+Import statements
+==================
+import mutable/list
+import list
+---
+(source_file
+    (import_declaration
+        path: (path
+            (path_segment)
+            (path_segment)))
+    (import_declaration
+        path: (path
+            (path_segment))))
+
+==================
+Not implemente Function
+==================
+def foo() = <>
+---
+(source_file
+    (function_item
+        name: (identifier)
+        parameters: (parameters)
+        body: (expression_statement
+            (hole))))
+
+==================
+Empty Function
+==================
+
+def foo() = {}
+
+---
+
+(source_file
+    (function_item
+        name: (identifier)
+        parameters: (parameters)
+        body: (expression_statement
+            (block))))
+
+==================
+Function
+==================
+
+def add(a: Int, b: Int) = {}
+
+---
+(source_file
+    (function_item
+        name: (identifier)
+        parameters: (parameters
+            (parameter
+                pattern: (identifier)
+                type: (primitive_type))
+            (parameter
+                pattern: (identifier)
+                type: (primitive_type)))
+        body: (expression_statement
+            (block))))
+
+==================
+Interface
+==================
+interface FileNotFound {
+  def FileNotFound(path: String): Unit
+}
+
+---
+(source_file
+    (interface_item
+        name: (type_identifier)
+        body: (declaration_list
+            (function_item
+                name: (identifier)
+                parameters: (parameters
+                    (parameter
+                        pattern: (identifier)
+                        type: (primitive_type)))
+                return_type: (return_type
+                    type: (primitive_type))))))
+
+==================
+Interface with Generics
+==================
+
+interface Net[A,L] {
+  def send[A, L](value: A, receiver: Location[L]): Unit / { IO }
+  def recv[A, L](receiver: Location[L]): A / { IO, SomeError }
+}
+---
+
+(source_file
+    (interface_item
+        name: (type_identifier)
+        type_parameters: (type_parameters
+            (type_identifier)
+            (type_identifier))
+        body: (declaration_list
+            (function_item
+                name: (identifier)
+                type_parameters: (type_parameters
+                    (type_identifier)
+                    (type_identifier))
+                parameters: (parameters
+                    (parameter
+                        pattern: (identifier)
+                        type: (type_identifier))
+                    (parameter
+                        pattern: (identifier)
+                        type: (generic_type
+                            (type_identifier)
+                            type_arguments: (type_arguments
+                                (type_identifier)))))
+                return_type: (return_type
+                    type: (primitive_type)
+                    effects: (effects
+                        (effect
+                            (type_identifier)))))
+            (function_item
+                name: (identifier)
+                type_parameters: (type_parameters
+                    (type_identifier)
+                    (type_identifier))
+                parameters: (parameters
+                    (parameter
+                        pattern: (identifier)
+                        type: (generic_type
+                            (type_identifier)
+                            type_arguments: (type_arguments
+                                (type_identifier)))))
+                return_type: (return_type
+                    type: (type_identifier)
+                    effects: (effects
+                        (effect
+                            (type_identifier))
+                        (effect
+                            (type_identifier))))))))
+
+==================
+Effect alias
+==================
+effect IO = { Read, Write }
+
+---
+
+(source_file
+    (effect_item
+        name: (type_identifier)
+        alias: (effect_alias_list
+            (effect_alias
+                (type_identifier))
+            (effect_alias
+                (type_identifier)))))
+
+
+==================
+Effect alias with Generics
+==================
+
+effect IO[A] = { Read, Write[A] }
+
+---
+ (source_file
+    (effect_item
+        name: (type_identifier)
+        type_parameters: (type_parameters
+            (type_identifier))
+        alias: (effect_alias_list
+            (effect_alias
+                (type_identifier))
+            (effect_alias
+                (generic_type
+                    (type_identifier)
+                type_arguments: (type_arguments
+                    (type_identifier)))))))
+
+==================
+Effect
+==================
+
+effect DefaultIndent(): Int
+
+---
+(source_file
+    (effect_item
+        name: (type_identifier)
+        parameters: (parameters)
+        return_type: (return_type
+            type: (primitive_type))))
+
+==================
+Effekt with Generics
+==================
+
+effect FileNotFound[A](path: String, msg: A): Unit
+
+---
+
+(source_file
+    (effect_item
+        name: (type_identifier)
+        type_parameters: (type_parameters
+            (type_identifier))
+        parameters: (parameters
+            (parameter
+                pattern: (identifier)
+                type: (primitive_type))
+            (parameter
+                pattern: (identifier)
+                type: (type_identifier)))
+        return_type: (return_type
+            type: (primitive_type))))
+
+==================
+Simple Addition
+==================
+def add2(a: Int) = a + 2
+---
+ (source_file
+      (function
+        (identifier)
+        (parameters
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier))))
+        (binary_expression
+          (identifier)
+          (number))))
+==================
+Simple Multiplication
+==================
+def mult2(a: Int)   = a * 2
+
+---
+ (source_file
+      (function
+        (identifier)
+        (parameters
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier))))
+        (binary_expression
+          (identifier)
+          (number))))
+
+==================
+Boolean
+==================
+
+def isTrue() = true
+
+---
+(source_file
+   (function
+       (identifier)
+       (boolean)))
+
+
+==================
+Function precedence
+==================
+
+def foo() = {
+   val x = println(1)
+}
+
+---
+ (source_file
+      (function
+        (identifier)
+        (block
+          (statement
+            (assignment
+              (identifier)
+              (function_call
+                (identifier)
+                (argument
+                  (number))))))))
+
+
+==================
+Constructor assignment
+==================
+
+def foo() = {
+   val x = A()
+}
+
+---
+    (source_file
+      (function
+        (identifier)
+        (block
+          (statement
+            (assignment
+              (identifier)
+              (constructor
+                (type_identifier)))))))
+
+==================
+do SomeEffect
+==================
+
+def foo(): Unit / {SomeEffect} = {
+   do SomeEffect()
+}
+
+---
+  (source_file
+      (function
+        (identifier)
+        (return_type
+          (parameter_type
+            (type_identifier))
+          (effects
+            (type_identifier)))
+        (block
+          (statement
+            (expression_statement
+              (unary_expression
+                (constructor
+                  (type_identifier))))))))
+
+==================
+Simple matching
+==================
+def foo(x: Int) = {
+    l match {
+        case 1 => true
+        case 2 => false
+    }
+}
+
+---
+
+(source_file
+      (function
+        (identifier)
+        (parameters
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier))))
+        (block
+          (statement
+            (expression_statement
+              (match_expression
+                (identifier)
+                (case_clause
+                  (number)
+                  (boolean))
+                (case_clause
+                  (number)
+                  (boolean))))))))
+
+==================
+Tuple matching
+==================
+def foo(x: Int, y: Int) = {
+    (x,y) match {
+        case (1, 2) => true
+        case (2, 3) => false
+    }
+}
+---
+(source_file
+      (function
+        (identifier)
+        (parameters
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier)))
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier))))
+        (block
+          (statement
+            (expression_statement
+              (match_expression
+                (tuple_expression
+                  (identifier)
+                  (identifier))
+                (case_clause
+                  (tuple_pattern
+                    (number)
+                    (number))
+                  (boolean))
+                (case_clause
+                  (tuple_pattern
+                    (number)
+                    (number))
+                  (boolean))))))))
+
+==================
+Tuple function argument
+==================
+
+def foo(x: (Int, Int)) = <>
+
+---
+
+(source_file
+      (function
+        (identifier)
+        (parameters
+          (parameter
+            (identifier)
+            (tuple_parameter_type
+              (parameter_type
+                (type_identifier))
+              (parameter_type
+                (type_identifier)))))
+        (not_implemented)))
+
+==================
+try with handler function and resume
+==================
+
+def foo() = {
+    try {
+       bar()
+    } with Effect {
+        def baz(msg, it) = resume(it)
+     }
+}
+
+---
+ (source_file
+      (function
+        (identifier)
+        (block
+          (statement
+            (expression_statement
+              (try_expression
+                (block
+                  (statement
+                    (expression_statement
+                      (function_call
+                        (identifier)))))
+                (with_handler
+                  (parameter_type
+                    (type_identifier))
+                  (handler_function
+                    (identifier)
+                    (handler_function_parameters
+                      (identifier)
+                      (identifier))
+                       (resume
+                      (identifier))))))))))
+==================
+try with annonymous handler function
+==================
+def foo() = {
+    try {
+    meanRatio(4.2, 1.3)
+    } with Exc {
+       (msg) =>  println(msg)
+    }
+}
+
+---
+
+(source_file
+      (function
+        (identifier)
+        (block
+          (statement
+            (expression_statement
+              (try_expression
+                (block
+                  (statement
+                    (expression_statement
+                      (function_call
+                        (identifier)
+                        (argument
+                          (number))
+                        (argument
+                          (number))))))
+                (with_handler
+                  (parameter_type
+                    (type_identifier))
+                  (anonymous_function
+                    (handler_function_parameters
+                      (identifier))
+                    (function_call
+                      (identifier)
+                      (argument
+                        (identifier)))))))))))
+
+==================
+Pre-arg function call
+==================
+
+def foo(x: Double) = {
+    x.ceil
+}
+
+---
+
+(source_file
+      (function
+        (identifier)
+        (parameters
+          (parameter
+            (identifier)
+            (parameter_type
+              (type_identifier))))
+        (block
+          (statement
+            (expression_statement
+              (call_chain
+                (identifier)
+                (pre_arg_function_call
+                  (identifier))))))))
+
+==================
+line comment
+==================
+// this is a comment
+---
+(source_file
+  (comment))
+
+
+==================
+multiline comment
+==================
+/* */
+/* This is a comment
+*
+*/
+
+def foo() = <>
+
+/* */
+---
+  (source_file
+      (comment)
+      (comment)
+      (function
+        (identifier)
+        (not_implemented))
+      (comment))
+
+
+==================
+While loop
+==================
+def foo() = {
+    while (true) {
+        println("Hello")
+    }
+}
+---
+ (source_file
+      (function
+        (identifier)
+        (block
+          (statement
+            (while_expression
+              (boolean)
+              (block
+                (statement
+                  (expression_statement
+                    (function_call
+                      (identifier)
+                      (argument
+                        (string)))))))))))
+
+==================
+If expression
+==================
+def foo() = {
+    if (true) {
+        println("Hello")
+    } if else (false) {
+        def bar() = println("Goodbye")
+    } else {
+        println("Goodbye")
+    }
+}
+---
+
+ (source_file
+      (function
+        (identifier)
+        (block
+          (statement
+            (expression_statement
+              (if_expression
+                (boolean)
+                (block
+                  (statement
+                    (expression_statement
+                      (function_call
+                        (identifier)
+                        (argument
+                          (string))))))
+                (if_else_expression
+                  (boolean)
+                  (block
+                    (statement
+                      (function
+                        (identifier)
+                        (function_call
+                          (identifier)
+                          (argument
+                            (string))))))
+                  (else_expression
+                    (block
+                      (statement
+                        (expression_statement
+                          (function_call
+                            (identifier)
+                            (argument
+                              (string))))))))))))))
+
+==================
+If and binary expression
+==================
+
+def pop() : Int = {
+  if (something) {} else {};
+
+  42333 + 1
+}
+---
+ (source_file
+      (function
+        (identifier)
+        (return_type
+          (parameter_type
+            (type_identifier)))
+        (block
+          (statement
+            (expression_statement
+              (if_expression
+                (identifier)
+                (block)
+                (else_expression
+                  (block)))))
+          (statement
+            (expression_statement
+              (binary_expression
+                (number)
+                (binary_expression
+                  (number)
