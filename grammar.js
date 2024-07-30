@@ -214,9 +214,11 @@ module.exports = grammar({
       seq("/", choice(seq("{", sepBy(",", $.effect), "}"), $.effect)),
 
     effect: ($) =>
-      seq(
-        $._type_identifier,
-        field("type_parameters", optional($.type_parameters)),
+      prec.right(
+        seq(
+          $._type_identifier,
+          field("type_parameters", optional($.type_parameters)),
+        ),
       ),
 
     val_declaration: ($) =>
@@ -263,21 +265,107 @@ module.exports = grammar({
     _expression: ($) =>
       choice(
         $.hole,
-        // $.unary_expression,
-        // $.binary_expression,
-        // $.assignment_expression,
-        // $.call_expression,
-        // $.resume_expression,
-        // $.do_expression,
+        $.unit_expression,
+        $.unary_expression,
+        $.binary_expression,
+        $.assignment_expression,
+        $.call_expression,
+        $.resume_expression,
+        $.do_expression,
         $._literal,
-        // prec.left($.identifier),
-        // $.list_expression,
-        // $.parenthesized_expression,
+        prec.left($.identifier),
+        $.list_expression,
+        $.tuple_expression,
+        $.field_expression,
+        $._expression_ending_with_block,
       ),
 
     hole: ($) => "<>",
+    unit_expression: ($) => seq("(", ")"),
 
-    block: ($) => seq("{", repeat($._statement), "}"),
+    unary_expression: ($) =>
+      prec(PREC.unary, seq(choice("-", "!"), $._expression)),
+
+    // https://github.com/tree-sitter/tree-sitter-rust/blob/master/grammar.js#L1024
+    binary_expression: ($) => {
+      const table = [
+        [PREC.and, "and"],
+        [PREC.or, "or"],
+        [PREC.comparative, choice("==", "!=", "<", "<=", ">", ">=")],
+        [PREC.additive, choice("+", "-")],
+        [PREC.multiplicative, choice("*", "/", "%")],
+      ];
+
+      return choice(
+        ...table.map(([precedence, operator]) =>
+          prec.left(
+            precedence,
+            seq(
+              field("left", $._expression),
+              field("operator", operator),
+              field("right", $._expression),
+            ),
+          ),
+        ),
+      );
+    },
+
+    assignment_expression: ($) =>
+      prec.left(
+        PREC.assign,
+        seq(field("left", $._expression), "=", field("right", $._expression)),
+      ),
+
+    call_expression: ($) =>
+      prec(
+        PREC.call,
+        prec.right(
+          seq(
+            field("function", $._expression),
+            field(
+              "arguments",
+              choice(
+                seq($.arguments, repeat($.block_argument)),
+                repeat($.block_argument),
+              ),
+            ),
+          ),
+        ),
+      ),
+
+    arguments: ($) =>
+      choice(seq("(", sepBy(",", $._expression), optional(","), ")")),
+
+    block_argument: ($) => seq("{", sepBy(",", $._expression), "}"),
+
+    do_expression: ($) => prec.left(seq("do", $._expression)),
+
+    list_expression: ($) =>
+      seq("[", seq(sepBy(",", $._expression), optional(",")), "]"),
+
+    tuple_expression: ($) =>
+      seq("(", seq(sepBy1(",", $._expression), optional(",")), ")"),
+
+    field_expression: ($) =>
+      prec(
+        PREC.field,
+        seq(
+          field("value", $._expression),
+          ".",
+          field("field", $._field_identifier),
+        ),
+      ),
+
+    resume_expression: ($) =>
+      prec(
+        PREC.call,
+        choice(
+          seq("resume", "(", field("value", $._expression), ")"),
+          seq(field("value", $._expression), ".", "resume"),
+        ),
+      ),
+
+    block: ($) => seq("{", repeat(seq($._statement, optional(";"))), "}"),
 
     // === section - patterns ===
     _pattern: ($) => choice($.identifier),
@@ -290,7 +378,6 @@ module.exports = grammar({
         $.integer_literal,
         $.float_literal,
         $.boolean_literal,
-        $.negative_literal,
       ),
 
     float_literal: ($) =>
@@ -301,12 +388,8 @@ module.exports = grammar({
         ),
       ),
 
-    // https://github.com/tree-sitter/tree-sitter-rust/blob/master/grammar.js#L1468
-    negative_literal: ($) =>
-      seq("-", choice($.integer_literal, $.float_literal, $.float_literal)),
-
     // https://github.com/tree-sitter/tree-sitter-rust/blob/master/grammar.js#L1470
-    // not sure if this is necessary in effect, but it's good to have it for syntax highlighting anyway
+    // not sure if this is necessary in effekt, but it's good to have it for syntax highlighting anyway
     integer_literal: (_) =>
       token(
         seq(choice(/[0-9][0-9_]*/, /0x[0-9a-fA-F_]+/, /0b[01_]+/, /0o[0-7_]+/)),
