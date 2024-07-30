@@ -50,7 +50,12 @@ module.exports = grammar({
   ],
 
   // supertypes that include a lot of other tokens
-  //supertypes: ($) => [$._expression],
+  supertypes: ($) => [
+    $._expression,
+    $._literal,
+    $._type,
+    $._declaration_statement,
+  ],
 
   // conflicts to be resolved at runtime using multiple stacks.
   // The first rule is prefered over the second one
@@ -85,6 +90,7 @@ module.exports = grammar({
         $.effect_item,
         $.function_item,
         $.import_declaration,
+        $.val_declaration,
       ),
 
     expression_statement: ($) =>
@@ -213,6 +219,14 @@ module.exports = grammar({
         field("type_parameters", optional($.type_parameters)),
       ),
 
+    val_declaration: ($) =>
+      seq(
+        "val",
+        field("name", $.identifier),
+        "=",
+        field("value", $._expression),
+      ),
+
     import_declaration: ($) => seq("import", field("path", $.path)),
 
     path: ($) => sepBy1("/", $.path_segment),
@@ -246,7 +260,20 @@ module.exports = grammar({
 
     // === section - expressions ===
 
-    _expression: ($) => choice($.hole),
+    _expression: ($) =>
+      choice(
+        $.hole,
+        // $.unary_expression,
+        // $.binary_expression,
+        // $.assignment_expression,
+        // $.call_expression,
+        // $.resume_expression,
+        // $.do_expression,
+        $._literal,
+        // prec.left($.identifier),
+        // $.list_expression,
+        // $.parenthesized_expression,
+      ),
 
     hole: ($) => "<>",
 
@@ -254,6 +281,61 @@ module.exports = grammar({
 
     // === section - patterns ===
     _pattern: ($) => choice($.identifier),
+
+    // === section - literals ===
+
+    _literal: ($) =>
+      choice(
+        $.string_literal,
+        $.integer_literal,
+        $.float_literal,
+        $.boolean_literal,
+        $.negative_literal,
+      ),
+
+    float_literal: ($) =>
+      prec.left(
+        seq(
+          choice(/[0-9][0-9_]*/, optional(seq(".", /[0-9][0-9_]*/))),
+          seq(".", /[0-9][0-9_]*/),
+        ),
+      ),
+
+    // https://github.com/tree-sitter/tree-sitter-rust/blob/master/grammar.js#L1468
+    negative_literal: ($) =>
+      seq("-", choice($.integer_literal, $.float_literal, $.float_literal)),
+
+    // https://github.com/tree-sitter/tree-sitter-rust/blob/master/grammar.js#L1470
+    // not sure if this is necessary in effect, but it's good to have it for syntax highlighting anyway
+    integer_literal: (_) =>
+      token(
+        seq(choice(/[0-9][0-9_]*/, /0x[0-9a-fA-F_]+/, /0b[01_]+/, /0o[0-7_]+/)),
+      ),
+
+    // https://github.com/tree-sitter/tree-sitter-rust/blob/master/grammar.js#L1480
+    string_literal: ($) =>
+      seq(
+        token.immediate('"'),
+        repeat(choice($.escape_sequence, $.string_content)),
+        token.immediate('"'),
+      ),
+
+    string_content: (_) => /.*/,
+
+    escape_sequence: (_) =>
+      token.immediate(
+        seq(
+          "\\",
+          choice(
+            /[^xu]/,
+            /u[0-9a-fA-F]{4}/,
+            /u\{[0-9a-fA-F]+\}/,
+            /x[0-9a-fA-F]{2}/,
+          ),
+        ),
+      ),
+
+    boolean_literal: (_) => choice("true", "false"),
 
     // ======================== old ========================
 

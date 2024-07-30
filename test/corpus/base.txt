@@ -313,6 +313,17 @@ effect FileNotFound[A](path: String, msg: A): Unit
             type: (primitive_type))))
 
 ==================
+val declaration
+==================
+val y = <>
+
+---
+(source_file
+    (val_declaration
+        name: (identifier)
+        value: (hole)))
+
+==================
 Simple Addition
 ==================
 def add2(a: Int) = a + 2
