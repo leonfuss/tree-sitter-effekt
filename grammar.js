@@ -1,6 +1,8 @@
 module.exports = grammar({
   name: "effekt",
 
+  extras: ($) => [/\s/, $.comment],
+
   keyword: ($) =>
     choice(
       "record",

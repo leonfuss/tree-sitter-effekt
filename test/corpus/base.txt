@@ -713,3 +713,34 @@ def foo() = {
                             (identifier)
                             (argument
                               (string))))))))))))))
+
+==================
+If and binary expression
+==================
+
+def pop() : Int = {
+  if (something) {} else {};
+
+  42333 + 1
+}
+---
+ (source_file
+      (function
+        (identifier)
+        (return_type
+          (parameter_type
+            (type_identifier)))
+        (block
+          (statement
+            (expression_statement
+              (if_expression
+                (identifier)
+                (block)
+                (else_expression
+                  (block)))))
+          (statement
+            (expression_statement
+              (binary_expression
+                (number)
+                (binary_expression
+                  (number)
