@@ -33,6 +33,15 @@
  ","
 ] @punctuation.delimiter
 
+[
+    "+"
+    "-"
+    "/"
+    "%"
+    "*"
+    "++"
+] @operator
+
 "import" @include
 
 (comment) @comment
@@ -54,8 +63,13 @@
 
 (function_item  name: (identifier) @function.name)
 
+(function_item (identifier) @constructor
+  (#match? @constructor "[A-Z][A-Z_a-z0-9]+"))
 
-;(parameters (parameter (pattern (identifier) @parameter)))
+
+((call_expression (identifier) @type.constructor)
+    (#match? @constructor "[A-Z][A-Z_a-z0-9]+"))
+
 
 ; types
 (type_identifier) @type.name
@@ -64,11 +78,11 @@
 
 
 ; effects
-(effect_item name: (type_identifier) @effect)
+(effect_item name: (type_identifier) @type.effect)
 (effect_alias [
     (primitive_type)
     (type_identifier)
-    ] @effect)
+    ] @type.effect)
 
 (interface_item
     body: (declaration_list

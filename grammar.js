@@ -1,5 +1,4 @@
 const PREC = {
-  constructor: 10,
   call: 9,
   field: 8,
   try: 7,
@@ -259,12 +258,11 @@ module.exports = grammar({
     _expression: ($) =>
       choice(
         $.hole,
+        $.call_expression,
         $.unit_expression,
         $.unary_expression,
-        $.constructor_expression,
         $.binary_expression,
         $.assignment_expression,
-        $.call_expression,
         $.resume_expression,
         $.do_expression,
         $._literal,
@@ -328,21 +326,7 @@ module.exports = grammar({
         ),
       ),
 
-    constructor_expression: ($) =>
-      prec(
-        PREC.constructor,
-        seq(
-          field(
-            "constructor",
-            alias($._constructor_identifier, $._type_identifier),
-          ),
-          field("type_parameters", optional($.type_parameters)),
-          field("arguments", $.arguments),
-        ),
-      ),
-
-    arguments: ($) =>
-      choice(seq("(", sepBy(",", $._expression), optional(","), ")")),
+    arguments: ($) => seq("(", sepBy(",", $._expression), optional(","), ")"),
 
     block_argument: ($) =>
       seq("{", $.parameters, "=>", sepBy(",", $._expression), "}"),
@@ -450,7 +434,20 @@ module.exports = grammar({
     // === section - patterns ===
 
     _pattern: ($) =>
-      choice($._literal_pattern, $.identifier, $.tuple_pattern, $.list_pattern),
+      choice(
+        $._literal_pattern,
+        $.constructor_pattern,
+        $.identifier,
+        $.tuple_pattern,
+        $.list_pattern,
+      ),
+
+    constructor_pattern: ($) =>
+      seq(
+        field("constructor", $._type_identifier),
+        field("type_parameters", optional($.type_parameters)),
+        field("parameter", alias($.tuple_pattern, $.parameter_pattern)),
+      ),
 
     tuple_pattern: ($) => seq("(", sepBy(",", $._pattern), optional(","), ")"),
 
@@ -500,8 +497,6 @@ module.exports = grammar({
     boolean_literal: (_) => choice("true", "false"),
 
     identifier: ($) => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
-
-    _constructor_identifier: ($) => /[A-Z][_\p{XID_Continue}]*/,
 
     _type_identifier: ($) => alias($.identifier, $.type_identifier),
     _field_identifier: ($) => alias($.identifier, $.field_identifier),

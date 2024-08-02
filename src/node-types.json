@@ -62,10 +62,6 @@
         "named": true
       },
       {
-        "type": "constructor_expression",
-        "named": true
-      },
-      {
         "type": "do_expression",
         "named": true
       },
@@ -406,25 +402,25 @@
     }
   },
   {
-    "type": "constructor_expression",
+    "type": "constructor_pattern",
     "named": true,
     "fields": {
-      "arguments": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "arguments",
-            "named": true
-          }
-        ]
-      },
       "constructor": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "_type_identifier",
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameter": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "parameter_pattern",
             "named": true
           }
         ]
@@ -956,6 +952,10 @@
           "named": true
         },
         {
+          "type": "constructor_pattern",
+          "named": true
+        },
+        {
           "type": "float_literal",
           "named": true
         },
@@ -1085,6 +1085,10 @@
           "named": true
         },
         {
+          "type": "constructor_pattern",
+          "named": true
+        },
+        {
           "type": "float_literal",
           "named": true
         },
@@ -1147,6 +1151,10 @@
             "named": true
           },
           {
+            "type": "constructor_pattern",
+            "named": true
+          },
+          {
             "type": "float_literal",
             "named": true
           },
@@ -1189,6 +1197,53 @@
     }
   },
   {
+    "type": "parameter_pattern",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "boolean_literal",
+          "named": true
+        },
+        {
+          "type": "constructor_pattern",
+          "named": true
+        },
+        {
+          "type": "float_literal",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "integer_literal",
+          "named": true
+        },
+        {
+          "type": "list_pattern",
+          "named": true
+        },
+        {
+          "type": "negative_literal",
+          "named": true
+        },
+        {
+          "type": "string_literal",
+          "named": true
+        },
+        {
+          "type": "tuple_pattern",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "parameters",
     "named": true,
     "fields": {},
@@ -1198,6 +1253,10 @@
       "types": [
         {
           "type": "boolean_literal",
+          "named": true
+        },
+        {
+          "type": "constructor_pattern",
           "named": true
         },
         {
@@ -1398,6 +1457,10 @@
       "types": [
         {
           "type": "boolean_literal",
+          "named": true
+        },
+        {
+          "type": "constructor_pattern",
           "named": true
         },
         {
@@ -1830,10 +1893,6 @@
   {
     "type": "]",
     "named": false
-  },
-  {
-    "type": "_type_identifier",
-    "named": true
   },
   {
     "type": "and",

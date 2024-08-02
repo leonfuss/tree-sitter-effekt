@@ -402,7 +402,7 @@ Constructor assignment
 ==================
 
 def foo() = {
-   val x = A()
+   val x = Alll()
 }
 
 ---
@@ -416,7 +416,23 @@ def foo() = {
                     name: (identifier)
                     value: (call_expression
                         function: (identifier)
-                            arguments: (arguments)))))))
+                        arguments: (arguments)))))))
+
+==================
+Constructor
+==================
+def foo() = Bar()
+
+---
+
+(source_file
+    (function_item
+        name: (identifier)
+        parameters: (parameters)
+        body: (expression_statement
+            (call_expression
+                function: (identifier)
+                arguments: (arguments)))))
 
 ==================
 do SomeEffect
@@ -440,7 +456,9 @@ def foo(): Unit / {SomeEffect} = {
             (block
                 (expression_statement
                     (do_expression
-                        (Construction
+                        (call_expression
+                            function: (identifier)
+                            arguments: (arguments))))))))
 ==================
 Simple matching
 ==================
@@ -801,3 +819,77 @@ def exactDistribution[R] { prog: () => R / { Flip, Fail } }: Distribution[R] / {
             effects: (effects))
         body: (expression_statement
             (block))))
+
+=================
+match constructor pattern
+================
+
+def insertDistribution(): Distribution =
+  xs match {
+    case Cons(Weighted(b, q), ys) => if(a == b) {
+      Cons(Weighted(a, p + q), ys)
+    } else {
+      Cons(Weighted(b, q), insertDistribution[A](a, p, ys))
+    }
+  }
+
+---
+
+ (source_file
+    (function_item
+        name: (identifier)
+        parameters: (parameters)
+        return_type: (return_type
+            type: (type_identifier))
+        body: (expression_statement
+            (match_expression
+                value: (identifier)
+                body: (match_block
+                    (match_arm
+                        pattern: (match_pattern
+                            (constructor_pattern
+                                constructor: (type_identifier)
+                                parameter: (parameter_pattern
+                                    (constructor_pattern
+                                    constructor: (type_identifier)
+                                        parameter: (parameter_pattern
+                                        (identifier)
+                                       (identifier)))
+                                (identifier))))
+                        value: (if_expression
+                            condition: (binary_expression
+                                left: (identifier)
+                                right: (identifier))
+                block: (block
+                    (expression_statement
+                      (call_expression
+                        function: (identifier)
+                        arguments: (arguments
+                          (call_expression
+                            function: (identifier)
+                            arguments: (arguments
+                              (identifier)
+                              (binary_expression
+                                left: (identifier)
+                                right: (identifier))))
+                          (identifier)))))
+                  else_clause: (else_clause
+                    block: (block
+                      (expression_statement
+                        (call_expression
+                          function: (identifier)
+                          arguments: (arguments
+                            (call_expression
+                              function: (identifier)
+                              arguments: (arguments
+                                (identifier)
+                                (identifier)))
+                            (ERROR
+                              (identifier))
+                            (call_expression
+                              function: (list_expression
+                                (identifier))
+                              arguments: (arguments
+                                (identifier)
+                                (identifier)
+                                (identifier)))))))))))))))
