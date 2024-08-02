@@ -284,7 +284,7 @@ module.exports = grammar({
         [PREC.and, "and"],
         [PREC.or, "or"],
         [PREC.comparative, choice("==", "!=", "<", "<=", ">", ">=")],
-        [PREC.additive, choice("+", "-")],
+        [PREC.additive, choice("+", "-", "++")],
         [PREC.multiplicative, choice("*", "/", "%")],
       ];
 
