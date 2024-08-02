@@ -835,7 +835,7 @@ def insertDistribution(): Distribution =
 
 ---
 
- (source_file
+(source_file
     (function_item
         name: (identifier)
         parameters: (parameters)
@@ -844,35 +844,35 @@ def insertDistribution(): Distribution =
         body: (expression_statement
             (match_expression
                 value: (identifier)
-                body: (match_block
-                    (match_arm
-                        pattern: (match_pattern
+            body: (match_block
+                (match_arm
+                    pattern: (match_pattern
+                    (constructor_pattern
+                        constructor: (type_identifier)
+                        parameter: (parameter_pattern
                             (constructor_pattern
-                                constructor: (type_identifier)
+                            constructor: (type_identifier)
                                 parameter: (parameter_pattern
-                                    (constructor_pattern
-                                    constructor: (type_identifier)
-                                        parameter: (parameter_pattern
-                                        (identifier)
-                                       (identifier)))
-                                (identifier))))
-                        value: (if_expression
-                            condition: (binary_expression
-                                left: (identifier)
-                                right: (identifier))
-                block: (block
-                    (expression_statement
-                      (call_expression
-                        function: (identifier)
-                        arguments: (arguments
-                          (call_expression
-                            function: (identifier)
-                            arguments: (arguments
-                              (identifier)
-                              (binary_expression
-                                left: (identifier)
-                                right: (identifier))))
-                          (identifier)))))
+                                    (identifier)
+                                    (identifier)))
+                                    (identifier))))
+                    value: (if_expression
+                        condition: (binary_expression
+                            left: (identifier)
+                            right: (identifier))
+                        block: (block
+                            (expression_statement
+                                (call_expression
+                                    function: (identifier)
+                                    arguments: (arguments
+                                        (call_expression
+                                            function: (identifier)
+                                            arguments: (arguments
+                                                (identifier)
+                                        (binary_expression
+                                            left: (identifier)
+                                            right: (identifier))))
+                            (identifier)))))
                   else_clause: (else_clause
                     block: (block
                       (expression_statement
@@ -884,12 +884,30 @@ def insertDistribution(): Distribution =
                               arguments: (arguments
                                 (identifier)
                                 (identifier)))
-                            (ERROR
-                              (identifier))
                             (call_expression
-                              function: (list_expression
-                                (identifier))
+                              function: (identifier)
+                              type_parameter: (type_parameters
+                                (type_identifier))
                               arguments: (arguments
                                 (identifier)
                                 (identifier)
                                 (identifier)))))))))))))))
+
+==================
+Generic function
+==================
+
+insertDistribution[A](a, p, ys)
+
+---
+
+(source_file
+    (expression_statement
+        (call_expression
+            function: (identifier)
+            type_parameter: (type_parameters
+                (type_identifier))
+        arguments: (arguments
+            (identifier)
+            (identifier)
+            (identifier)))))

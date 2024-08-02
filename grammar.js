@@ -315,6 +315,7 @@ module.exports = grammar({
         prec.right(
           seq(
             field("function", $._expression),
+            field("type_parameter", optional($.type_parameters)),
             field(
               "arguments",
               choice(

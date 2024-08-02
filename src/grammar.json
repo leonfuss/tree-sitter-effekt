@@ -1708,6 +1708,22 @@
             },
             {
               "type": "FIELD",
+              "name": "type_parameter",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "type_parameters"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "FIELD",
               "name": "arguments",
               "content": {
                 "type": "CHOICE",
