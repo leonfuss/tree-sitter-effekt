@@ -18,7 +18,8 @@
     "prebuilds/**",
     "bindings/node/*",
     "queries/*",
-    "src/**"
+    "src/**",
+    "queries/**"
   ],
   "dependencies": {
     "node-addon-api": "^7.1.0",
@@ -47,7 +48,16 @@
   "tree-sitter": [
     {
       "scope": "source.effekt",
-      "injection-regex": "^effekt$"
+      "injection-regex": "^effekt$",
+      "file-types": [
+        "effekt"
+      ],
+      "highlights": [
+        "queries/highlights.scm"
+      ],
+      "tags": [
+        "queries/tags.scm"
+      ]
     }
   ]
 }

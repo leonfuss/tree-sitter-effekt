@@ -897,13 +897,47 @@
           "type": "FIELD",
           "name": "return_type",
           "content": {
-            "type": "SYMBOL",
-            "name": "return_type"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "block_return_type"
+            },
+            "named": true,
+            "value": "return_type"
           }
         },
         {
           "type": "STRING",
           "value": "}"
+        }
+      ]
+    },
+    "block_return_type": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_type"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "effects",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "effects"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
         }
       ]
     },

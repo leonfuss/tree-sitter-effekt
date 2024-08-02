@@ -186,9 +186,12 @@ module.exports = grammar({
         ":",
         field("type", $._type),
         "=>",
-        field("return_type", $.return_type),
+        field("return_type", alias($.block_return_type, $.return_type)),
         "}",
       ),
+
+    block_return_type: ($) =>
+      seq(field("type", $._type), field("effects", optional($.effects))),
 
     return_type: ($) =>
       seq(":", field("type", $._type), field("effects", optional($.effects))),

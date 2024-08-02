@@ -770,3 +770,34 @@ def pop() : Int = {
                         right: (binary_expression
                             left: (integer_literal)
                             right: (integer_literal))))))))
+
+===================
+Function with block parameters
+===================
+
+def exactDistribution[R] { prog: () => R / { Flip, Fail } }: Distribution[R] / {} = {}
+
+---
+(source_file
+    (function_item
+        name: (identifier)
+        type_parameters: (type_parameters
+            (type_identifier))
+        block_parameter: (block_parameter
+            name: (identifier)
+            type: (unit_type)
+            return_type: (return_type
+                type: (type_identifier)
+                effects: (effects
+                    (effect
+                        (type_identifier))
+                    (effect
+                        (type_identifier)))))
+        return_type: (return_type
+            type: (generic_type
+                (type_identifier)
+                type_arguments: (type_arguments
+                    (type_identifier)))
+            effects: (effects))
+        body: (expression_statement
+            (block))))
