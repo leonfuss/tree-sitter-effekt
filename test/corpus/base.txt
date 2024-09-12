@@ -911,3 +911,36 @@ insertDistribution[A](a, p, ys)
             (identifier)
             (identifier)
             (identifier)))))
+
+========================
+Funktion with block parameters
+========================
+
+def exactDistribution[R] { prog: (x,y) => R / { Flip, Fail } }: Distribution[R] / {} = <>
+
+---
+(source_file
+    (function_item
+        name: (identifier)
+        type_parameters: (type_parameters
+            (type_identifier))
+        block_parameter: (block_parameter
+            name: (identifier)
+            type: (tuple_type
+                (type_identifier)
+                (type_identifier))
+            return_type: (return_type
+                type: (type_identifier)
+                effects: (effects
+                    (effect
+                        (type_identifier))
+                    (effect
+                        (type_identifier)))))
+        return_type: (return_type
+            type: (generic_type
+                (type_identifier)
+            type_arguments: (type_arguments
+                (type_identifier)))
+            effects: (effects))
+        body: (expression_statement
+            (hole))))
